@@ -1,1 +1,73 @@
 // app global css in SCSS form
+// Default
+@font-face {
+  font-family: SourceSansPro;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/SourceSansPro-Regular") format("truetype");
+}
+
+// For Headings
+@font-face {
+  font-family: Futura-PT;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/FuturaPTBook.otf") format("woff");
+}
+
+// For Product Descriptions
+@font-face {
+  font-family: Zilla;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/ZillaSlab-Regular.ttf") format("truetype");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  // text-decoration: none;
+  font-family: SourceSansPro, "Roboto", "-apple-system", "Helvetica Neue",
+    Helvetica, Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: Futura-PT, "Roboto", Arial, Helvetica, sans-serif;
+}
+
+body {
+  min-width: 320px;
+}
+
+form[disabled="disabled"] * {
+  pointer-events: none;
+}
+
+// global custom styles
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #323535;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #4d5e61;
+}

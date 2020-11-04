@@ -33,7 +33,7 @@ module.exports = function(ctx) {
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-      "roboto-font", // optional, you are not bound to it
+      // "roboto-font", // optional, you are not bound to it
       "material-icons" // optional, you are not bound to it
     ],
 
@@ -91,7 +91,6 @@ module.exports = function(ctx) {
     framework: {
       iconSet: "material-icons", // Quasar icon set
       lang: "en-us", // Quasar language pack
-      config: {},
 
       // Possible values for "importStrategy":
       // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
@@ -106,7 +105,13 @@ module.exports = function(ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: ["Cookies", "Meta", "Notify", "LoadingBar"],
+      config: {
+        loadingBar: {
+          color: "secondary",
+          size: "2px"
+        }
+      }
     },
 
     // animations: 'all', // --- includes all animations
