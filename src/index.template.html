@@ -18,5 +18,25 @@
   <body>
     <!-- DO NOT touch the following DIV -->
     <div id="q-app"></div>
+    <script>
+      const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+      const calcWinFn = () => {
+        // Get window inner height for carousel size
+        document.documentElement.style.setProperty('--window-height', window.innerHeight + 'px');
+        document.documentElement.style.setProperty('--psa-height', document.getElementById('psa-bar').offsetHeight + 'px');
+      };
+      calcWinFn();
+      window.addEventListener('resize', debounce(calcWinFn, 200));
+    </script>
   </body>
 </html>

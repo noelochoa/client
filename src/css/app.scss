@@ -14,7 +14,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/FuturaPTBook.otf") format("woff");
+  src: url("/fonts/FuturaPTHeavy.otf") format("woff");
 }
 
 // For Product Descriptions
@@ -30,8 +30,8 @@
   margin: 0;
   padding: 0;
   // text-decoration: none;
-  font-family: SourceSansPro, "Roboto", "-apple-system", "Helvetica Neue",
-    Helvetica, Arial, sans-serif;
+  font-family: Futura-PT, SourceSansPro, "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
 }
 
 // global custom styles
@@ -49,11 +49,32 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: Futura-PT, "Roboto", Arial, Helvetica, sans-serif;
+  font-family: Futura-PT, SourceSansPro, Arial, Helvetica, sans-serif;
+}
+
+p,
+li {
+  font-family: SourceSansPro, Arial, Helvetica, sans-serif;
+}
+
+li {
+  list-style: none;
 }
 
 .bg-transparent {
   background: transparent;
+}
+
+.ls-sm {
+  letter-spacing: 2.4px;
+}
+
+.ls-lg {
+  letter-spacing: 4.4px;
+}
+
+.q-carousel {
+  height: calc(var(--window-height) - var(--psa-height, 0px) - 42px) !important;
 }
 
 /* custom scrollbar */
