@@ -32,14 +32,15 @@
           img-src="https://cdn.quasar.dev/img/mountains.jpg"
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h2 ls-sm">First stop</div>
+            <div class="text-h3 ls-sm">First stop</div>
             <div class="text-subtitle1 q-mt-sm">Mountains</div>
             <q-btn
               class="q-mt-md ls-sm"
               unelevated
+              padding="sm lg"
+              size="16px"
               color="accent"
               text-color="dark"
-              size="lg"
               label="Buy Now"
             />
           </div>
@@ -49,14 +50,15 @@
           img-src="https://cdn.quasar.dev/img/parallax1.jpg"
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h2 ls-sm">Second stop</div>
+            <div class="text-h3 ls-sm">Second stop</div>
             <div class="text-subtitle1 q-mt-sm">Famous City</div>
             <q-btn
               class="q-mt-md ls-sm"
               unelevated
+              padding="sm lg"
+              size="16px"
               color="accent"
               text-color="dark"
-              size="lg"
               label="Buy Now"
             />
           </div>
@@ -66,14 +68,15 @@
           img-src="https://cdn.quasar.dev/img/parallax2.jpg"
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h2 ls-sm">Third stop</div>
+            <div class="text-h3 ls-sm">Third stop</div>
             <div class="text-subtitle1 q-mt-sm">Famous Bridge</div>
             <q-btn
               class="q-mt-md ls-sm"
               unelevated
+              padding="sm lg"
+              size="16px"
               color="accent"
               text-color="dark"
-              size="lg"
               label="Buy Now"
             />
           </div>
@@ -201,7 +204,8 @@
         class="q-mt-xl"
         unelevated
         color="red-6 ls-sm"
-        size="lg"
+        size="16px"
+        padding="sm lg"
         label="View All Products"
       />
     </div>
@@ -236,9 +240,7 @@
   flex-grow: 0;
   flex-basis: 240px;
 }
-.carousel {
-  width: 100%;
-}
+
 .custom-caption {
   padding: 70px;
   color: white;

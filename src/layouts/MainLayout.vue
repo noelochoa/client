@@ -111,7 +111,6 @@
 }
 .footer-copyright {
   margin: 10px 60px;
-  font-family: Futura-PT;
   font-weight: 600;
   letter-spacing: 2.6px;
   color: $primary;
