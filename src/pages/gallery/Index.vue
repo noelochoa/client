@@ -25,7 +25,7 @@
     >
       <div class="filter-drawer">
         <div class="filter-title q-pa-md">
-          <span class="text-h6 ls-sm text-primary text-weight-bold">
+          <span class="text-h6 ls-sm text-primary">
             FILTERS
           </span>
           <q-icon
@@ -35,6 +35,20 @@
             @click="filter = !filter"
           />
         </div>
+        <div class="filter-selection flex column">
+          <div class="text-primary ls-sm">CATEGORY</div>
+          <ul class="q-mt-md">
+            <li>Cakes</li>
+            <li>Cupcakes</li>
+            <li>Kakanin</li>
+          </ul>
+          <div class="text-primary ls-sm q-mt-md">OPTIONS</div>
+          <ul class="q-mt-md">
+            <li>Cakes</li>
+            <li>Cupcakes</li>
+            <li>Kakanin</li>
+          </ul>
+        </div>
       </div>
     </q-drawer>
 
@@ -42,45 +56,43 @@
     <div class="header-banner flex">
       <div class="img-wrapper"></div>
       <div class="caption">
-        <h4 class="text-accent ls-sm text-weight-bolder">ALL PRODUCTS</h4>
+        <h4 class="text-accent ls-sm">ALL PRODUCTS</h4>
       </div>
     </div>
 
     <!-- PRODUCTS -->
     <div class="content-main">
       <div class="nav-toolbar row no-wrap justify-end">
-        <div
-          class="nav-btn flex-center ls-sm text-weight-bold text-grey-8 cursor-pointer"
-        >
+        <div class="nav-btn flex-center ls-sm text-grey-8 cursor-pointer">
           SORT <q-icon name="keyboard_arrow_down" size="sm" color="grey-8" />
           <q-menu fit content-class="bg-secondary text-grey-8" auto-close>
             <q-list style="min-width: 210px">
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>BEST SELLING</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>ALPHABETICALLY, A-Z</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>ALPHABETICALLY, Z-A</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>DATE, NEWEST FIRST</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>DATE, OLDEST FIRST</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>PRICE, HIGHEST FIRST</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm text-weight-bold" clickable>
+              <q-item class="sort-item ls-sm" clickable>
                 <q-item-section>PRICE, LOWEST FIRST</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
         </div>
         <div
-          class="nav-btn filter-btn flex-center ls-sm text-weight-bold text-grey-8 cursor-pointer"
+          class="nav-btn filter-btn flex-center ls-sm text-grey-8 cursor-pointer"
           @click="filter = !filter"
         >
           FILTER
@@ -101,12 +113,13 @@
             <li>Kakanin</li>
           </ul>
         </div>
-        <div class="product-list flex">
+        <div class="product-list">
           <div class="product-item">
             <q-img
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -122,7 +135,9 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
             <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
           </div>
           <div class="product-item">
@@ -130,6 +145,7 @@
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -145,7 +161,35 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
+            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
+          </div>
+          <div class="product-item">
+            <q-img
+              class="product-img"
+              src="https://cdn.shopify.com/s/files/1/0054/0878/4458/products/RW-GMK-REDLINE-R_3_png_400x.png?v=1602815892"
+              native-context-menu
+              :ratio="1"
+            >
+              <q-icon
+                class="absolute all-pointer-events"
+                size="32px"
+                name="card_giftcard"
+                color="white"
+                style="top: 8px; left: 8px"
+              >
+                <q-tooltip
+                  content-class="bg-primary text-accent text-subtitle2"
+                >
+                  On Sale
+                </q-tooltip>
+              </q-icon>
+            </q-img>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
             <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
           </div>
           <div class="product-item">
@@ -153,6 +197,7 @@
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -168,38 +213,18 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
             <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
           </div>
 
           <div class="product-item">
             <q-img
               class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
+              src="https://cdn.shopify.com/s/files/1/0054/0878/4458/products/RW-GMK-REDLINE-R_3_png_400x.png?v=1602815892"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -215,7 +240,9 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 2</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 2
+            </div>
             <div class="ls-sm q-mt-sm text-center text-dark">
               from
               <span class="text-strike"> 200</span>
@@ -253,7 +280,6 @@
 }
 .side-nav li {
   font-size: 14px;
-  font-weight: 700;
   margin: 0 14px;
   display: inline-block;
   flex-grow: 0;
@@ -306,15 +332,10 @@
       border-left: 1px solid $line;
     }
   }
-  .heading {
-    font-size: 22px;
-    font-weight: 900;
-    color: $primary;
-  }
+
   .products {
     display: flex;
     font-size: 16px;
-    font-weight: 600;
     width: 100%;
     padding: 20px;
 
@@ -325,41 +346,52 @@
       li {
         margin-bottom: 16px;
         font-size: 15px;
-        font-weight: 300;
         color: $grey-8;
       }
     }
   }
 }
+
 .product-list {
+  width: 100%;
   margin-left: 40px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
+  margin-right: 40px;
+  display: grid;
+  grid-gap: 40px;
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
 
   .product-item {
-    width: 370px;
-    flex-grow: 0;
-    flex-shrink: 1;
-    margin: 10px 20px;
-
     .product-img {
       width: 100%;
-      height: 370px;
+      max-width: 100%;
     }
   }
 }
 
-.filter-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid $line;
+.filter-drawer {
+  .filter-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid $line;
 
-  & > i {
-    position: absolute;
-    right: 20px;
+    & > i {
+      position: absolute;
+      right: 20px;
+    }
+  }
+
+  .filter-selection {
+    display: flex;
+    font-size: 16px;
+    width: 100%;
+    padding: 20px;
+
+    li {
+      margin-bottom: 16px;
+      font-size: 15px;
+      color: $grey-8;
+    }
   }
 }
 
@@ -371,6 +403,21 @@
 @media (max-width: 1038px) {
   .filter {
     display: none !important;
+  }
+}
+@media (max-width: 1300px) {
+  .product-list {
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .product-list {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .product-list {
+    grid-template-columns: 1fr;
   }
 }
 </style>

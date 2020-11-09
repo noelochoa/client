@@ -95,14 +95,15 @@
 
     <!-- NEW ITEMS -->
     <div class="newitems" ref="newitems">
-      <h5 class="ls-sm text-primary text-weight-bold">NEW ARRIVALS</h5>
+      <h5 class="ls-sm text-primary">NEW ARRIVALS</h5>
       <div class="content">
-        <div class="product-list flex">
+        <div class="product-list">
           <div class="product-item">
             <q-img
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -118,7 +119,9 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
             <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
           </div>
           <div class="product-item">
@@ -126,6 +129,7 @@
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -141,7 +145,9 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
             <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
           </div>
           <div class="product-item">
@@ -149,6 +155,7 @@
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -164,7 +171,9 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 1</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 1
+            </div>
             <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
           </div>
 
@@ -173,6 +182,7 @@
               class="product-img"
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               native-context-menu
+              :ratio="1"
             >
               <q-icon
                 class="absolute all-pointer-events"
@@ -188,7 +198,9 @@
                 </q-tooltip>
               </q-icon>
             </q-img>
-            <div class="heading ls-sm q-mt-md text-center">PRODUCT NAME 2</div>
+            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+              PRODUCT NAME 2
+            </div>
             <div class="ls-sm q-mt-sm text-center text-dark">
               from
               <span class="text-strike"> 200</span>
@@ -234,7 +246,6 @@
 }
 .side-nav li {
   font-size: 14px;
-  font-weight: 700;
   margin: 0 14px;
   display: inline-block;
   flex-grow: 0;
@@ -256,15 +267,8 @@
   justify-content: center;
   flex-direction: column;
 
-  .heading {
-    font-size: 22px;
-    font-weight: 900;
-    color: $primary;
-  }
-
   .content {
     font-size: 16px;
-    font-weight: 600;
     width: 100%;
     padding: 20px;
   }
@@ -280,21 +284,32 @@
   transform: scale(1.25);
 }
 .product-list {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  margin-left: 40px;
+  margin-right: 40px;
+  display: grid;
+  grid-gap: 40px;
+  grid-template-columns: repeat(4, minmax(300px, 1fr));
 
   .product-item {
-    width: 370px;
-    flex-grow: 0;
-    flex-shrink: 1;
-    margin: 10px 20px;
-
     .product-img {
       width: 100%;
-      height: 370px;
+      max-width: 100%;
     }
+  }
+}
+@media (max-width: 1390px) {
+  .product-list {
+    margin-left: 40px;
+    margin-right: 40px;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .product-list {
+    margin-left: 40px;
+    margin-right: 40px;
+    justify-content: center;
+    grid-template-columns: 0.8fr;
   }
 }
 </style>

@@ -12,14 +12,14 @@
       <div class="footer-content">
         <div class="footer-inner flex">
           <div class="about">
-            <h6 class="ls-sm text-primary text-weight-bold">ABOUT</h6>
+            <h6 class="ls-sm text-primary">ABOUT</h6>
             <p class="q-my-md">
               This is a collaborative web store project by Lorna's Bakeshop and
               Lutong Bahay sa Sawali Restaurant (Batangas City).
             </p>
           </div>
           <div class="links">
-            <h6 class="ls-sm text-primary text-weight-bold">LINKS</h6>
+            <h6 class="ls-sm text-primary">LINKS</h6>
             <ul class="links q-my-md">
               <li class="block">HOME</li>
               <li class="block">PRODUCTS</li>
@@ -28,7 +28,7 @@
             </ul>
           </div>
           <div class="sns">
-            <h6 class="ls-sm text-primary text-weight-bold">FOLLOW US</h6>
+            <h6 class="ls-sm text-primary">FOLLOW US</h6>
             <ul class="sns-buttons q-my-xs">
               <li class="facebook inline-block">
                 <a
@@ -94,16 +94,18 @@
   padding: 40px 70px;
 }
 .footer-inner {
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-wrap: nowrap;
+  --gap-x: 20px;
+  --gap-y: 40px;
+  display: flex;
+  margin: 20px 60px 110px;
 
-  div {
-    margin: 20px 60px 110px;
-    flex-basis: 380px;
+  & > div {
+    flex: 0 1 380px;
+    margin: 0 var(--gap-x) var(--gap-y) 0;
   }
-  div:last-child {
-    margin-left: auto;
+  .links,
+  .sns {
+    flex-basis: 200px;
   }
   .sns-buttons {
     margin-left: -16px;
@@ -111,9 +113,16 @@
 }
 .footer-copyright {
   margin: 10px 60px;
-  font-weight: 600;
   letter-spacing: 2.6px;
   color: $primary;
+}
+
+@media (min-width: 1130px) {
+  .footer-inner {
+    .sns {
+      margin-left: auto;
+    }
+  }
 }
 </style>
 
