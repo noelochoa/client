@@ -113,146 +113,52 @@
             <li>Kakanin</li>
           </ul>
         </div>
-        <div class="product-list">
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
+        <q-infinite-scroll
+          style="width: 100%; margin: 0 40px;"
+          @load="onLoadProducts"
+          :offset="offset"
+          :debounce="200"
+        >
+          <div class="product-list" ref="prodlist">
+            <q-resize-observer @resize="onResize" :debounce="200" />
+            <div
+              class="product-item"
+              v-for="(item, idx) in items"
+              :key="'pkey-' + idx"
+              ref="prod"
             >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
+              <q-img
+                class="product-img"
+                src="https://cdn.quasar.dev/img/parallax2.jpg"
+                native-context-menu
+                :ratio="1"
               >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
+                <q-icon
+                  class="absolute all-pointer-events"
+                  size="32px"
+                  name="card_giftcard"
+                  color="white"
+                  style="top: 8px; left: 8px"
                 >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.shopify.com/s/files/1/0054/0878/4458/products/RW-GMK-REDLINE-R_3_png_400x.png?v=1602815892"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.shopify.com/s/files/1/0054/0878/4458/products/RW-GMK-REDLINE-R_3_png_400x.png?v=1602815892"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 2
-            </div>
-            <div class="ls-sm q-mt-sm text-center text-dark">
-              from
-              <span class="text-strike"> 200</span>
-              <span class="text-primary">
-                100
-              </span>
-              PHP
+                  <q-tooltip
+                    content-class="bg-primary text-accent text-subtitle2"
+                  >
+                    On Sale
+                  </q-tooltip>
+                </q-icon>
+              </q-img>
+              <div class="text-h6 text-primary ls-sm q-mt-md text-center">
+                PRODUCT NAME 1
+              </div>
+              <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
             </div>
           </div>
-        </div>
+          <template v-slot:loading>
+            <div class="row justify-center q-mt-xl">
+              <q-spinner-dots color="primary" size="40px" />
+            </div>
+          </template>
+        </q-infinite-scroll>
       </div>
     </div>
   </q-page>
@@ -354,8 +260,6 @@
 
 .product-list {
   width: 100%;
-  margin-left: 40px;
-  margin-right: 40px;
   display: grid;
   grid-gap: 40px;
   grid-template-columns: repeat(4, minmax(240px, 1fr));
@@ -431,10 +335,34 @@ export default {
   mounted() {},
   data() {
     return {
+      offset: 250,
+      items: [{}, {}],
       filter: false,
       opaque: false
     };
   },
-  methods: {}
+  methods: {
+    onResize(size) {
+      if (this.$refs.prod && this.$refs.prod.length > 0) {
+        let elH = this.$refs.prod[0].offsetHeight,
+          elW = this.$refs.prod[0].offsetWidth;
+        this.offset = elW > 0 ? elH * 2 + elW : 250;
+      }
+      // console.log('OFFSET', this.offset);
+    },
+
+    onLoadProducts(index, done) {
+      // TODO
+      setTimeout(() => {
+        this._disableScroll();
+        this.items.push({}, {}, {});
+        if (index > 10) done(true);
+        done();
+        setTimeout(() => {
+          this._enableScroll();
+        }, 100);
+      }, 1600);
+    }
+  }
 };
 </script>

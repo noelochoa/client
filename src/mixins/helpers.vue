@@ -49,11 +49,23 @@ export default {
     }
   },
   methods: {
-    // Scroll
-    scrollToElement(el) {
+    // Scroll Helpers
+    _disableScroll() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop,
+        scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+      window.onscroll = function() {
+        window.scrollTo(scrollLeft, scrollTop);
+      };
+    },
+
+    _enableScroll() {
+      window.onscroll = function() {};
+    },
+
+    scrollToElement(el, time = 0) {
       const target = getScrollTarget(el);
       const offset = el.offsetTop;
-      const duration = 750;
+      const duration = time;
       setScrollPosition(target, offset, duration);
     }
   }

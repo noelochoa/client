@@ -103,6 +103,10 @@
     flex: 0 1 380px;
     margin: 0 var(--gap-x) var(--gap-y) 0;
   }
+  .about {
+    font-size: 14px;
+    padding-right: 20px;
+  }
   .links,
   .sns {
     flex-basis: 200px;

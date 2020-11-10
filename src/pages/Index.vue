@@ -89,7 +89,7 @@
         text-color="primary"
         color="secondary"
         round
-        @click="scrollToElement($refs.newitems)"
+        @click="scrollToElement($refs.newitems, 700)"
       />
     </div>
 
