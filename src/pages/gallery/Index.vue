@@ -357,10 +357,10 @@ export default {
         this._disableScroll();
         this.items.push({}, {}, {});
         if (index > 10) done(true);
-        done();
         setTimeout(() => {
           this._enableScroll();
         }, 100);
+        done();
       }, 1600);
     }
   }

@@ -219,6 +219,7 @@
         size="16px"
         padding="sm lg"
         label="View All Products"
+        to="/products"
       />
     </div>
   </q-page>
