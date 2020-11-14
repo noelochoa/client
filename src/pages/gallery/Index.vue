@@ -1,5 +1,5 @@
 <template>
-  <q-page class="home flex flex-start">
+  <q-page class="mainpage flex flex-start">
     <!-- NAV -->
     <div
       class="navigation"
@@ -165,7 +165,7 @@
 </template>
 
 <style lang="scss" scoped>
-.home > div {
+.mainpage > div {
   width: 100%;
 }
 .navigation {
@@ -191,6 +191,10 @@
   flex-grow: 0;
   flex-basis: 240px;
 }
+.opaque-nav {
+  background: $navbg;
+  color: $dark;
+}
 .header-banner {
   width: 100%;
   height: 550px;
@@ -212,10 +216,6 @@
     position: absolute;
     margin: 0 auto;
   }
-}
-.opaque-nav {
-  background: $navbg;
-  color: $dark;
 }
 .content-main {
   display: flex;
@@ -331,10 +331,16 @@ import HelperMixin from "../../mixins/helpers";
 export default {
   name: "Gallery",
   mixins: [HelperMixin],
+  meta() {
+    return {
+      title: this.title || "All Products"
+    };
+  },
   created() {},
   mounted() {},
   data() {
     return {
+      title: "",
       offset: 250,
       items: [{}, {}],
       filter: false,
@@ -355,7 +361,29 @@ export default {
       // TODO
       setTimeout(() => {
         this._disableScroll();
-        this.items.push({}, {}, {});
+        this.items.push(
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}
+        );
         if (index > 10) done(true);
         setTimeout(() => {
           this._enableScroll();

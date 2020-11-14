@@ -85,8 +85,12 @@ li {
   letter-spacing: 4.4px;
 }
 
-.q-carousel {
+.featured-carousel {
   height: calc(var(--window-height) - var(--psa-height, 0px) - 42px) !important;
+}
+
+.no-hover:hover div {
+  background: none !important;
 }
 
 /* custom scrollbar */
@@ -107,4 +111,10 @@ li {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #4d5e61;
+}
+
+/* Moz Scrollbar */
+:root {
+  scrollbar-color: #323535 transparent !important;
+  scrollbar-width: thin !important;
 }

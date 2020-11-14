@@ -18,6 +18,7 @@
     <!-- CAROUSEL -->
     <div class="carousel">
       <q-carousel
+        class="featured-carousel"
         arrows
         animated
         swipeable
