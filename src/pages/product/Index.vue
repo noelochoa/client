@@ -9,6 +9,7 @@
         </ul>
       </div>
     </div>
+
     <!-- PRODUCT PAGE -->
     <div class="grid">
       <!-- Image Gallery -->
@@ -154,6 +155,88 @@
       </div>
     </div>
 
+    <!-- COMMENTS -->
+    <div class="comments">
+      <h5 class="ls-sm text-primary">COMMENTS</h5>
+      <div class="content text-grey-8">
+        <div class="comments-list">
+          <ul
+            v-for="(comment, cidx) in comments"
+            :key="'comment-' + cidx"
+            class="flex flex-center"
+          >
+            <!-- COMMENT -->
+            <q-item class="q-mt-xl level-1">
+              <q-item-section avatar>
+                <q-avatar color="primary" text-color="white">
+                  A
+                </q-avatar>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label class="author">Noel Ochoa</q-item-label>
+                <q-item-label class="message">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex
+                  eaque est nisi, cumque eius aspernatur ipsum porro commodi,
+                  praesentium aliquid possimus distinctio delectus reiciendis
+                  hic eligendi, ea fugiat qui aliquam! Lorem ipsum dolor sit
+                  amet consectetur adipisicing elit.
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section side top>
+                <q-item-label class="message">5 min ago</q-item-label>
+              </q-item-section>
+            </q-item>
+            <!-- REPLY (if applicable) -->
+            <q-item class="q-mt-md level-2">
+              <q-item-section avatar>
+                <q-avatar color="primary" text-color="white">
+                  A
+                </q-avatar>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label class="author text-underline">Admin</q-item-label>
+                <q-item-label class="message">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex
+                  eaque est nisi, cumque eius aspernatur ipsum porro commodi,
+                  praesentium aliquid possimus distinctio delectus reiciendis
+                  hic eligendi, ea fugiat qui aliquam! Lorem ipsum dolor sit
+                  amet consectetur adipisicing elit.
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section side top>
+                <q-item-label class="message">5 min ago</q-item-label>
+              </q-item-section>
+            </q-item>
+          </ul>
+        </div>
+        <q-form class="comment-form q-mt-lg" ref="comment-form">
+          <q-editor
+            ref="qTxtEditor"
+            class="q-my-lg comment-editor"
+            v-model="comment"
+            min-height="240px"
+            content-class="text-grey-8 text-comment"
+            toolbar-toggle-color="yellow-8"
+            :toolbar="[
+              ['bold', 'italic'],
+              ['undo', 'redo']
+            ]"
+          />
+          <q-btn
+            unelevated
+            type="submit"
+            color="red-6 ls-sm"
+            size="16px"
+            padding="sm lg"
+            label="Post"
+          />
+        </q-form>
+      </div>
+    </div>
     <!-- RELATED PRODUCTS -->
     <div class="related">
       <h5 class="ls-sm text-primary">RELATED ITEMS</h5>
@@ -353,10 +436,11 @@
 }
 .oform {
   .description {
-    font-family: "Source Sans Pro";
+    font-family: "Source Sans Pro" !important;
     text-align: justify;
   }
 }
+.comments,
 .related {
   padding: 50px 0;
   display: flex;
@@ -371,6 +455,41 @@
     padding: 20px;
   }
 }
+.comments .content {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0 40px;
+
+  .comments-list {
+    width: 50%;
+
+    * {
+      font-family: "Source Sans Pro" !important;
+      line-height: 1.5em !important;
+    }
+    .level-1 {
+      max-width: 720px;
+    }
+    .level-2 {
+      max-width: 720px;
+      padding-left: 60px;
+    }
+    .author {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .message {
+      font-size: 15px;
+    }
+  }
+
+  .comment-form {
+    width: 50%;
+    max-width: 720px;
+  }
+}
+
 .product-list {
   margin-left: 40px;
   margin-right: 40px;
@@ -400,6 +519,16 @@
       "gallery"
       "oform"
       "info";
+  }
+  .comments .content {
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+
+    .comments-list,
+    .comment-form {
+      flex: 1 0 640px;
+    }
   }
 }
 @media (max-width: 760px) {
@@ -454,6 +583,8 @@ export default {
         quantity: 1,
         test: 1
       },
+      comments: [{}, {}, {}],
+      comment: "",
       testoptions: [
         { label: "opt1", value: 1 },
         { label: "opt2", value: 2 },

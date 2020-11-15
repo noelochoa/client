@@ -64,13 +64,20 @@ h6 {
   font-family: "Futura PT", "Source Sans Pro", Arial, Helvetica, sans-serif;
 }
 
-p,
-li {
-  font-family: "Source Sans Pro", Arial, Helvetica, sans-serif;
-}
-
 li {
   list-style: none;
+}
+
+p,
+li,
+.text-comment,
+.text-comment * {
+  font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+}
+
+.q-field__messages {
+  font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+  font-size: 14px;
 }
 
 .bg-transparent {
@@ -91,6 +98,10 @@ li {
 
 .no-hover:hover div {
   background: none !important;
+}
+
+.text-underline {
+  text-decoration: underline !important;
 }
 
 /* custom scrollbar */
