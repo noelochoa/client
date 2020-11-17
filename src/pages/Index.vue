@@ -29,12 +29,18 @@
         @mouseleave="autoplay = true"
       >
         <q-carousel-slide
-          name="first"
-          img-src="https://cdn.quasar.dev/img/mountains.jpg"
+          v-for="(item, idx) in featured"
+          :key="'slide-' + idx"
+          :name="'slide-' + idx"
+          :img-src="
+            item.banner
+              ? resolveAssetsUrl(item.banner)
+              : 'https://dummyimage.com/1600x900/454345/fafafa.png&text=No+Banner'
+          "
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h3 ls-sm">First stop</div>
-            <div class="text-subtitle1 q-mt-sm">Mountains</div>
+            <div class="text-h3 ls-sm">{{ item.name }}</div>
+            <div class="text-subtitle1 q-mt-sm">{{ item.description }}</div>
             <q-btn
               class="q-mt-md ls-sm"
               unelevated
@@ -42,43 +48,8 @@
               size="16px"
               color="accent"
               text-color="dark"
-              label="Buy Now"
-            />
-          </div>
-        </q-carousel-slide>
-        <q-carousel-slide
-          name="second"
-          img-src="https://cdn.quasar.dev/img/parallax1.jpg"
-        >
-          <div class="absolute-bottom custom-caption">
-            <div class="text-h3 ls-sm">Second stop</div>
-            <div class="text-subtitle1 q-mt-sm">Famous City</div>
-            <q-btn
-              class="q-mt-md ls-sm"
-              unelevated
-              padding="sm lg"
-              size="16px"
-              color="accent"
-              text-color="dark"
-              label="Buy Now"
-            />
-          </div>
-        </q-carousel-slide>
-        <q-carousel-slide
-          name="third"
-          img-src="https://cdn.quasar.dev/img/parallax2.jpg"
-        >
-          <div class="absolute-bottom custom-caption">
-            <div class="text-h3 ls-sm">Third stop</div>
-            <div class="text-subtitle1 q-mt-sm">Famous Bridge</div>
-            <q-btn
-              class="q-mt-md ls-sm"
-              unelevated
-              padding="sm lg"
-              size="16px"
-              color="accent"
-              text-color="dark"
-              label="Buy Now"
+              label="View More"
+              :to="'/products/' + item.seoname"
             />
           </div>
         </q-carousel-slide>
@@ -99,14 +70,23 @@
       <h5 class="ls-sm text-primary">NEW ARRIVALS</h5>
       <div class="content">
         <div class="product-list">
-          <div class="product-item">
+          <div
+            class="product-item"
+            v-for="(product, pidx) in newItems"
+            :key="'prod-' + pidx"
+          >
             <q-img
               class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
+              :src="
+                product.image
+                  ? resolveAssetsUrl(product.image)
+                  : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
+              "
               native-context-menu
               :ratio="1"
             >
               <q-icon
+                v-if="!isEmpty(product.discount)"
                 class="absolute all-pointer-events"
                 size="32px"
                 name="card_giftcard"
@@ -116,98 +96,22 @@
                 <q-tooltip
                   content-class="bg-primary text-accent text-subtitle2"
                 >
-                  On Sale
+                  {{ product.discount[0].percent }}% OFF
                 </q-tooltip>
               </q-icon>
             </q-img>
             <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
+              {{ product.name }}
             </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 2
-            </div>
-            <div class="ls-sm q-mt-sm text-center text-dark">
-              from
-              <span class="text-strike"> 200</span>
-              <span class="text-primary">
-                100
+            <div class="ls-sm q-mt-sm text-center">
+              <span v-if="!isEmpty(product.options)">from </span>
+              <span v-if="!isEmpty(product.discount)" class="text-strike">{{
+                product.baseprice
+              }}</span>
+              <span v-if="!isEmpty(product.discount)" class="text-primary">
+                {{ calcPrice(product.baseprice, product.discount[0].percent) }}
               </span>
+              <span v-else>{{ product.baseprice }}</span>
               PHP
             </div>
           </div>
@@ -321,12 +225,24 @@ import HelperMixin from "../mixins/helpers";
 export default {
   name: "Home",
   mixins: [HelperMixin],
+  preFetch({ store, redirect }) {
+    return store.dispatch("home/getProducts");
+  },
+  computed: {
+    featured() {
+      let ret = this.$store.getters["home/getFeatured"];
+      return ret;
+    },
+    newItems() {
+      let ret = this.$store.getters["home/getNewItems"];
+      return ret;
+    }
+  },
   created() {},
   mounted() {},
   data() {
     return {
-      cheight: 0,
-      slide: "first",
+      slide: "slide-0",
       autoplay: true,
       opaque: false
     };

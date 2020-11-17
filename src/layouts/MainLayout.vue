@@ -3,7 +3,10 @@
     <q-header elevated>
       <q-toolbar id="psa-bar">
         <q-toolbar-title class="text-center header">
-          <h6>ANNOUNCEMENT</h6>
+          <a v-if="psa.link" :href="psa.link" target="_blank">
+            <h6 v-html="psa.message"></h6>
+          </a>
+          <h6 v-else v-html="psa.message"></h6>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -133,6 +136,15 @@
 <script>
 export default {
   name: "MainLayout",
+  preFetch({ store, redirect }) {
+    return store.dispatch("home/getPSA");
+  },
+  computed: {
+    psa() {
+      let psa = this.$store.state.home.psa;
+      return { message: this.$sanitize(psa.message), link: psa.targetLink };
+    }
+  },
   meta: {
     title: "Home",
     titleTemplate: title => `${title} | LMC Web Front`,

@@ -49,6 +49,31 @@ export default {
     }
   },
   methods: {
+    // Uploaded Assets URL
+    resolveAssetsUrl(file) {
+      return process.env.STATIC_URL + "/" + file;
+    },
+
+    // Compute new price
+    calcPrice(base, discount) {
+      if (discount) {
+        const finalPrice = (base - (base * discount) / 100).toFixed(0);
+        return finalPrice;
+      }
+      return base;
+    },
+
+    // Falsey check
+    isEmpty(obj) {
+      if (typeof obj == "undefined") return true;
+      if (obj == null) return true;
+      if (obj.length == 0) return true;
+      for (let key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false;
+      }
+      return true;
+    },
+
     // Scroll Helpers
     _disableScroll() {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop,
