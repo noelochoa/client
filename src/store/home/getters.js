@@ -21,15 +21,20 @@ export function getNewItems(state) {
 
   if (state.newItems && state.newItems.length > 0) {
     state.newItems.map(item => {
-      let img = item.images.find(img => img.imageType == "gallery");
+      let img = item.images
+        ? item.images.find(img => img.imageType == "gallery")
+        : null;
       ret.push({
         name: item.name,
         seoname: item.seoname,
         options: item.options,
         baseprice: item.basePrice || "0",
-        discount: item.discount.filter(
-          el => el.target == "all" || el.target == "reseller"
-        ),
+        // TODO!!!
+        discount: item.discount
+          ? item.discount.filter(
+              el => el.target == "all" || el.target == "reseller"
+            )
+          : [],
         image: img ? img.image : ""
       });
     });

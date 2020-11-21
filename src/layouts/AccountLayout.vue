@@ -3,7 +3,10 @@
     <q-header elevated>
       <q-toolbar id="psa-bar">
         <q-toolbar-title class="text-center header">
-          <h6>ANNOUNCEMENT</h6>
+          <a v-if="psa.link" :href="psa.link" target="_blank">
+            <h6 v-html="psa.message"></h6>
+          </a>
+          <h6 v-else v-html="psa.message"></h6>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -21,10 +24,14 @@
           <div class="links">
             <h6 class="ls-sm text-primary">LINKS</h6>
             <ul class="links q-my-md">
-              <li class="block">HOME</li>
-              <li class="block">PRODUCTS</li>
-              <li class="block">ACCOUNT</li>
-              <li class="block">CART</li>
+              <li class="block"><router-link to="/">HOME</router-link></li>
+              <li class="block">
+                <router-link to="/products">PRODUCTS</router-link>
+              </li>
+              <li class="block">
+                <router-link to="/account">ACCOUNT</router-link>
+              </li>
+              <li class="block"><router-link to="/">CART</router-link></li>
             </ul>
           </div>
           <div class="sns">
@@ -114,6 +121,9 @@
   .sns-buttons {
     margin-left: -16px;
   }
+  .links li {
+    margin-bottom: 16px;
+  }
 }
 .footer-copyright {
   margin: 10px 60px;
@@ -133,6 +143,15 @@
 <script>
 export default {
   name: "AccountLayout",
+  preFetch({ store, redirect }) {
+    return store.dispatch("home/getPSA");
+  },
+  computed: {
+    psa() {
+      let psa = this.$store.state.home.psa;
+      return { message: this.$sanitize(psa.message), link: psa.targetLink };
+    }
+  },
   meta: {
     title: "Account",
     titleTemplate: title => `${title} | LMC Web Front`,

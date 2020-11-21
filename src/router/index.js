@@ -21,6 +21,7 @@ export default function(/* { store, ssrContext } */) {
       if (from && to.path === from.path) {
         return false;
       }
+      // console.log(savedPosition);
       if (savedPosition) {
         return new Promise((resolve, reject) => {
           setTimeout(() => {

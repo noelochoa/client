@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import home from "./home";
+import gallery from "./gallery";
 
 Vue.use(Vuex);
 
@@ -17,7 +18,8 @@ Vue.use(Vuex);
 export default function(/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      home
+      home,
+      gallery
     },
 
     // enable strict mode (adds overhead!)

@@ -8,9 +8,31 @@
       @mouseleave="opaque = false"
     >
       <div>
-        <ul class="side-nav">
-          <li class="ls-sm"><a>ACCOUNT</a></li>
-          <li class="ls-sm"><a>BASKET</a>(0)</li>
+        <ul class="left-nav">
+          <li class="ls-sm">
+            <router-link to="/" class="header-link hover-primary">
+              HOME</router-link
+            >
+          </li>
+          <li class="ls-sm">
+            <router-link to="/products" class="header-link hover-primary">
+              SHOP
+            </router-link>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <ul class="right-nav">
+          <li class="ls-sm">
+            <router-link to="/account" class="header-link hover-primary">
+              ACCOUNT</router-link
+            >
+          </li>
+          <li class="ls-sm">
+            <router-link to="/" class="header-link hover-primary">
+              BASKET (0)
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -49,7 +71,7 @@
               color="accent"
               text-color="dark"
               label="View More"
-              :to="'/products/' + item.seoname"
+              :to="'/buy/' + item.seoname"
             />
           </div>
         </q-carousel-slide>
@@ -75,33 +97,41 @@
             v-for="(product, pidx) in newItems"
             :key="'prod-' + pidx"
           >
-            <q-img
-              class="product-img"
-              :src="
-                product.image
-                  ? resolveAssetsUrl(product.image)
-                  : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
-              "
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                v-if="!isEmpty(product.discount)"
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
+            <router-link :to="'/buy/' + product.seoname">
+              <q-img
+                class="product-img cursor-pointer"
+                :src="
+                  product.image
+                    ? resolveAssetsUrl(product.image)
+                    : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
+                "
+                native-context-menu
+                :ratio="1"
               >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
+                <q-icon
+                  v-if="!isEmpty(product.discount)"
+                  class="absolute all-pointer-events"
+                  size="32px"
+                  name="card_giftcard"
+                  color="white"
+                  style="top: 8px; left: 8px"
                 >
-                  {{ product.discount[0].percent }}% OFF
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              {{ product.name }}
+                  <q-tooltip
+                    content-class="bg-primary text-accent text-subtitle2"
+                  >
+                    {{ product.discount[0].percent }}% OFF
+                  </q-tooltip>
+                </q-icon>
+              </q-img>
+            </router-link>
+
+            <div class="q-mt-md text-center cursor-pointer">
+              <router-link
+                :to="'/buy/' + product.seoname"
+                class="product-link text-h6 text-primary ls-sm"
+              >
+                {{ product.name }}
+              </router-link>
             </div>
             <div class="ls-sm q-mt-sm text-center">
               <span v-if="!isEmpty(product.options)">from </span>
@@ -139,7 +169,7 @@
   z-index: 999;
   height: 106px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   color: $link;
   transition: background 0.5s ease-out, color 0.25s ease-out;
@@ -147,17 +177,20 @@
 .navigation div {
   flex: 0 1 auto;
 }
-.side-nav {
+.left-nav {
+  margin-left: 24px;
+}
+.right-nav {
   margin-right: 24px;
 }
-.side-nav li {
+.right-nav li,
+.left-nav li {
   font-size: 14px;
   margin: 0 14px;
   display: inline-block;
   flex-grow: 0;
   flex-basis: 240px;
 }
-
 .custom-caption {
   padding: 70px;
   color: white;
@@ -200,6 +233,11 @@
     .product-img {
       width: 100%;
       max-width: 100%;
+      transition: transform 0.25s;
+    }
+
+    .product-img:hover {
+      transform: translate(2px, 2px);
     }
   }
 }
@@ -226,7 +264,9 @@ export default {
   name: "Home",
   mixins: [HelperMixin],
   preFetch({ store, redirect }) {
-    return store.dispatch("home/getProducts");
+    return store.dispatch("home/getProducts").catch(err => {
+      redirect("/error500");
+    });
   },
   computed: {
     featured() {

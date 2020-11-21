@@ -19,7 +19,7 @@ export async function getPSA({ commit }) {
     }
     return true;
   } catch (err) {
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }
 
@@ -36,6 +36,6 @@ export async function getProducts({ commit }) {
     }
     return true;
   } catch (err) {
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }

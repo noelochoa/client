@@ -4,17 +4,17 @@
   >
     <div>
       <div style="font-size: 20vh">
-        404
+        500
       </div>
 
       <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+        An unexpected error has occurred.
       </div>
 
       <q-btn
         class="q-mt-xl"
         color="white"
-        text-color="primary"
+        text-color="blue"
         unelevated
         to="/"
         label="Go Home"
@@ -26,6 +26,6 @@
 
 <script>
 export default {
-  name: "Error404"
+  name: "Error505"
 };
 </script>

@@ -3,9 +3,31 @@
     <!-- NAV -->
     <div class="navigation opaque-nav">
       <div>
-        <ul class="side-nav">
-          <li class="ls-sm"><a>ACCOUNT</a></li>
-          <li class="ls-sm"><a>BASKET</a>(0)</li>
+        <ul class="left-nav">
+          <li class="ls-sm">
+            <router-link to="/" class="header-link hover-primary"
+              >HOME</router-link
+            >
+          </li>
+          <li class="ls-sm">
+            <router-link to="/products" class="header-link hover-primary">
+              SHOP
+            </router-link>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <ul class="right-nav">
+          <li class="ls-sm">
+            <router-link to="/account" class="header-link hover-primary"
+              >ACCOUNT</router-link
+            >
+          </li>
+          <li class="ls-sm">
+            <router-link to="/" class="header-link hover-primary">
+              BASKET (0)
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -367,7 +389,7 @@
 .navigation {
   height: 106px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   color: $link;
   transition: background 0.5s ease-out, color 0.25s ease-out;
@@ -375,10 +397,14 @@
 .navigation div {
   flex: 0 1 auto;
 }
-.side-nav {
+.left-nav {
+  margin-left: 24px;
+}
+.right-nav {
   margin-right: 24px;
 }
-.side-nav li {
+.right-nav li,
+.left-nav li {
   font-size: 14px;
   margin: 0 14px;
   display: inline-block;

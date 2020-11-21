@@ -8,9 +8,31 @@
       @mouseleave="opaque = false"
     >
       <div>
-        <ul class="side-nav">
-          <li class="ls-sm"><a>ACCOUNT</a></li>
-          <li class="ls-sm"><a>BASKET</a>(0)</li>
+        <ul class="left-nav">
+          <li class="ls-sm">
+            <router-link to="/" class="header-link hover-primary">
+              HOME
+            </router-link>
+          </li>
+          <li class="ls-sm">
+            <router-link to="/products" class="header-link hover-primary">
+              SHOP
+            </router-link>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <ul class="right-nav">
+          <li class="ls-sm">
+            <router-link to="/account" class="header-link hover-primary">
+              ACCOUNT
+            </router-link>
+          </li>
+          <li class="ls-sm">
+            <router-link to="/" class="header-link hover-primary">
+              BASKET (0)
+            </router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -38,15 +60,26 @@
         <div class="filter-selection flex column">
           <div class="text-primary ls-sm">CATEGORY</div>
           <ul class="q-mt-md">
-            <li>Cakes</li>
-            <li>Cupcakes</li>
-            <li>Kakanin</li>
-          </ul>
-          <div class="text-primary ls-sm q-mt-md">OPTIONS</div>
-          <ul class="q-mt-md">
-            <li>Cakes</li>
-            <li>Cupcakes</li>
-            <li>Kakanin</li>
+            <li>
+              <router-link
+                to="/products/all"
+                class="hover-primary text-capitalize"
+                :class="{ 'text-primary': $route.params.category == 'all' }"
+              >
+                All
+              </router-link>
+            </li>
+            <li v-for="(category, cidx) in categoryList" :key="'cat-' + cidx">
+              <router-link
+                :to="'/products/' + category.path"
+                class="hover-primary text-capitalize"
+                :class="{
+                  'text-primary': $route.params.category == category.path
+                }"
+              >
+                {{ category.name }}
+              </router-link>
+            </li>
           </ul>
         </div>
       </div>
@@ -54,9 +87,19 @@
 
     <!-- BANNER -->
     <div class="header-banner flex">
-      <div class="img-wrapper"></div>
+      <div
+        class="img-wrapper"
+        ref="img-wrapper"
+        :style="
+          categoryBG
+            ? 'background-image:url(\'' +
+              resolveAssetsUrl(`${categoryBG}`) +
+              '\')'
+            : ''
+        "
+      ></div>
       <div class="caption">
-        <h4 class="text-accent ls-sm">ALL PRODUCTS</h4>
+        <h4 class="text-accent ls-sm text-uppercase">{{ selectedCategory }}</h4>
       </div>
     </div>
 
@@ -67,25 +110,74 @@
           SORT <q-icon name="keyboard_arrow_down" size="sm" color="grey-8" />
           <q-menu fit content-class="bg-secondary text-grey-8" auto-close>
             <q-list style="min-width: 210px">
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'best-selling'
+                }"
+                clickable
+                @click="onSort('best-selling')"
+              >
                 <q-item-section>BEST SELLING</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'title-asc'
+                }"
+                clickable
+                @click="onSort('title-asc')"
+              >
                 <q-item-section>ALPHABETICALLY, A-Z</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'title-desc'
+                }"
+                clickable
+                @click="onSort('title-desc')"
+              >
                 <q-item-section>ALPHABETICALLY, Z-A</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'date-desc'
+                }"
+                clickable
+                @click="onSort('date-desc')"
+              >
                 <q-item-section>DATE, NEWEST FIRST</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'date-asc'
+                }"
+                clickable
+                @click="onSort('date-asc')"
+              >
                 <q-item-section>DATE, OLDEST FIRST</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'price-desc'
+                }"
+                clickable
+                @click="onSort('price-desc')"
+              >
                 <q-item-section>PRICE, HIGHEST FIRST</q-item-section>
               </q-item>
-              <q-item class="sort-item ls-sm" clickable>
+              <q-item
+                class="sort-item ls-sm"
+                :class="{
+                  'text-primary': $route.query.sort == 'price-asc'
+                }"
+                clickable
+                @click="onSort('price-asc')"
+              >
                 <q-item-section>PRICE, LOWEST FIRST</q-item-section>
               </q-item>
             </q-list>
@@ -99,58 +191,100 @@
         </div>
       </div>
       <div class="products">
-        <div class="filter flex column">
-          <div class="text-primary ls-sm">CATEGORY</div>
-          <ul class="q-mt-md">
-            <li>Cakes</li>
-            <li>Cupcakes</li>
-            <li>Kakanin</li>
-          </ul>
-          <div class="text-primary ls-sm q-mt-md">OPTIONS</div>
-          <ul class="q-mt-md">
-            <li>Cakes</li>
-            <li>Cupcakes</li>
-            <li>Kakanin</li>
-          </ul>
+        <div class="filter">
+          <div class="sticky">
+            <div class="text-primary ls-sm">CATEGORY</div>
+            <ul class="q-mt-md">
+              <li>
+                <router-link
+                  to="/products/all"
+                  class="hover-primary text-capitalize"
+                  :class="{ 'text-primary': $route.params.category == 'all' }"
+                >
+                  All
+                </router-link>
+              </li>
+              <li v-for="(category, cidx) in categoryList" :key="'cat-' + cidx">
+                <router-link
+                  :to="'/products/' + category.path"
+                  class="hover-primary text-capitalize"
+                  :class="{
+                    'text-primary': $route.params.category == category.path
+                  }"
+                >
+                  {{ category.name }}
+                </router-link>
+              </li>
+            </ul>
+          </div>
         </div>
         <q-infinite-scroll
           style="width: 100%; margin: 0 40px;"
+          ref="infscroll"
           @load="onLoadProducts"
           :offset="offset"
           :debounce="200"
         >
           <div class="product-list" ref="prodlist">
             <q-resize-observer @resize="onResize" :debounce="200" />
+            <p class="text-h6 text-grey-8" v-if="isEmpty(productList)">
+              No products found.
+            </p>
             <div
               class="product-item"
-              v-for="(item, idx) in items"
-              :key="'pkey-' + idx"
+              v-for="(product, pidx) in productList"
+              :key="'prod-' + pidx"
               ref="prod"
             >
-              <q-img
-                class="product-img"
-                src="https://cdn.quasar.dev/img/parallax2.jpg"
-                native-context-menu
-                :ratio="1"
-              >
-                <q-icon
-                  class="absolute all-pointer-events"
-                  size="32px"
-                  name="card_giftcard"
-                  color="white"
-                  style="top: 8px; left: 8px"
+              <router-link :to="'/buy/' + product.seoname">
+                <q-img
+                  class="product-img cursor-pointer"
+                  :src="
+                    product.image
+                      ? resolveAssetsUrl(product.image)
+                      : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
+                  "
+                  native-context-menu
+                  :ratio="1"
                 >
-                  <q-tooltip
-                    content-class="bg-primary text-accent text-subtitle2"
+                  <q-icon
+                    v-if="!isEmpty(product.discount)"
+                    class="absolute all-pointer-events"
+                    size="32px"
+                    name="card_giftcard"
+                    color="white"
+                    style="top: 8px; left: 8px"
                   >
-                    On Sale
-                  </q-tooltip>
-                </q-icon>
-              </q-img>
-              <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-                PRODUCT NAME 1
+                    <q-tooltip
+                      content-class="bg-primary text-accent text-subtitle2"
+                    >
+                      {{ product.discount[0].percent }}% OFF
+                    </q-tooltip>
+                  </q-icon>
+                </q-img>
+              </router-link>
+
+              <div class="q-mt-md text-center cursor-pointer">
+                <router-link
+                  :to="'/buy/' + product.seoname"
+                  class="product-link text-h6 text-primary ls-sm"
+                >
+                  {{ product.name }}
+                </router-link>
               </div>
-              <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
+              <div class="ls-sm q-mt-sm text-center">
+                <span v-if="!isEmpty(product.options)">from </span>
+                <span v-if="!isEmpty(product.discount)" class="text-strike">{{
+                  product.baseprice
+                }}</span>
+                <span v-if="!isEmpty(product.discount)" class="text-primary">
+                  {{
+                    calcPrice(product.baseprice, product.discount[0].percent)
+                  }}
+                </span>
+                <span v-else>{{ product.baseprice }}</span>
+                PHP
+              </div>
             </div>
           </div>
           <template v-slot:loading>
@@ -165,6 +299,12 @@
 </template>
 
 <style lang="scss" scoped>
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 20px;
+}
+
 .mainpage > div {
   width: 100%;
 }
@@ -173,7 +313,7 @@
   z-index: 999;
   height: 106px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   color: $link;
   transition: background 0.5s ease-out, color 0.25s ease-out;
@@ -181,10 +321,14 @@
 .navigation div {
   flex: 0 1 auto;
 }
-.side-nav {
+.left-nav {
+  margin-left: 24px;
+}
+.right-nav {
   margin-right: 24px;
 }
-.side-nav li {
+.right-nav li,
+.left-nav li {
   font-size: 14px;
   margin: 0 14px;
   display: inline-block;
@@ -202,7 +346,7 @@
   align-items: center;
 
   .img-wrapper {
-    background-image: url(https://cdn.shopify.com/s/files/1/0054/0878/4458/collections/IMG_3061_1600x.jpg?v=1592023076);
+    background: $dark;
     transform: translate3d(0px, 0px, 0px);
     height: 100%;
     width: 100%;
@@ -211,6 +355,8 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
+    filter: contrast(0.4);
+    -webkit-filter: contrast(0.4);
   }
   .caption {
     position: absolute;
@@ -268,6 +414,11 @@
     .product-img {
       width: 100%;
       max-width: 100%;
+      transition: transform 0.25s;
+    }
+
+    .product-img:hover {
+      transform: translate(2px, 2px);
     }
   }
 }
@@ -326,6 +477,7 @@
 }
 </style>
 <script>
+import { mapGetters, mapActions } from "vuex";
 import HelperMixin from "../../mixins/helpers";
 
 export default {
@@ -333,63 +485,134 @@ export default {
   mixins: [HelperMixin],
   meta() {
     return {
-      title: this.title || "All Products"
+      title: this.selectedCategory || "All Products"
     };
+  },
+  preFetch({ store, currentRoute, previousRoute }) {
+    if (previousRoute && currentRoute.path == previousRoute.path) return;
+    const cat = currentRoute.params.category;
+    const sort = currentRoute.query.sort;
+
+    return store
+      .dispatch("gallery/getGalleryItems", {
+        category: cat ? cat.toLowerCase() : "all",
+        sort: sort
+      })
+      .catch(err => {
+        redirect("/error500");
+      });
+  },
+  computed: {
+    ...mapGetters("gallery", ["productList", "categoryList"]),
+    selectedCategory() {
+      let ret = "All Products";
+      if (this.$route.params.category) {
+        const param = this.$route.params.category.toLowerCase();
+        const cat = !this.isEmpty(this.categoryList)
+          ? this.categoryList.find(item => item.path == param)
+          : "";
+        ret = cat ? cat.name : ret;
+      }
+      return ret;
+    },
+    categoryBG() {
+      let ret = "";
+      if (!this.isEmpty(this.productList)) {
+        let first = this.productList.find(item => !!item.image);
+        ret = first ? first.image : ret;
+      }
+      return ret;
+    }
   },
   created() {},
   mounted() {},
+  watch: {
+    $route(to, from) {
+      if (to.path !== from.path) {
+        this.finished = false;
+      }
+    }
+  },
   data() {
     return {
-      title: "",
       offset: 250,
       items: [{}, {}],
       filter: false,
-      opaque: false
+      opaque: false,
+      finished: false
     };
   },
   methods: {
+    ...mapActions("gallery", [
+      "getProducts",
+      "getNextProducts",
+      "pushProducts"
+    ]),
+
     onResize(size) {
       if (this.$refs.prod && this.$refs.prod.length > 0) {
         let elH = this.$refs.prod[0].offsetHeight,
           elW = this.$refs.prod[0].offsetWidth;
         this.offset = elW > 0 ? elH * 2 + elW : 250;
       }
-      // console.log('OFFSET', this.offset);
+      // console.log("OFFSET", this.offset);
     },
 
-    onLoadProducts(index, done) {
-      // TODO
-      setTimeout(() => {
+    changeSorting(val) {
+      let sortQry = Object.assign({}, this.$route.query, { sort: val });
+      if (!val) delete sortQry.filter;
+
+      this.$router.replace({ query: sortQry }).catch(err => {});
+    },
+
+    async onSort(val) {
+      try {
+        this.changeSorting(val);
+        let cat = this.$route.params.category;
+        cat = cat ? cat.toLowerCase() : "all";
+        await this.getProducts({
+          category: cat,
+          sort: val
+        });
+        this.finished = false;
+      } catch (err) {}
+    },
+
+    async onLoadProducts(index, done) {
+      if (
+        this.finished ||
+        this.isEmpty(this.productList) ||
+        this.productList.length < 12 ||
+        this.productList.length % 12 > 0
+      ) {
+        done();
+        return;
+      }
+
+      try {
+        let cat = this.$route.params.category;
+        let sort = this.$route.query.sort;
+        const products = await this.getNextProducts({
+          category: cat ? cat.toLowerCase() : "all",
+          sort: sort ? sort : null
+        });
+        if (this.isEmpty(products)) {
+          this.finished = true;
+          done();
+          return;
+        } else if (products.length < 12) {
+          this.finished = true;
+        }
         this._disableScroll();
-        this.items.push(
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}
-        );
-        if (index > 10) done(true);
+        this.pushProducts(products);
         setTimeout(() => {
           this._enableScroll();
         }, 100);
+      } catch (err) {
+        console.log(err);
+      } finally {
         done();
-      }, 1600);
+      }
     }
   }
 };

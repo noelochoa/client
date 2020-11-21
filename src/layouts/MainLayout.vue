@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lhh Lpr lff">
     <q-header elevated>
-      <q-toolbar id="psa-bar">
+      <q-toolbar id="psa-bar" v-if="psa">
         <q-toolbar-title class="text-center header">
           <a v-if="psa.link" :href="psa.link" target="_blank">
             <h6 v-html="psa.message"></h6>
@@ -24,10 +24,14 @@
           <div class="links">
             <h6 class="ls-sm text-primary">LINKS</h6>
             <ul class="links q-my-md">
-              <li class="block">HOME</li>
-              <li class="block">PRODUCTS</li>
-              <li class="block">ACCOUNT</li>
-              <li class="block">CART</li>
+              <li class="block"><router-link to="/">HOME</router-link></li>
+              <li class="block">
+                <router-link to="/products">PRODUCTS</router-link>
+              </li>
+              <li class="block">
+                <router-link to="/account">ACCOUNT</router-link>
+              </li>
+              <li class="block"><router-link to="/">CART</router-link></li>
             </ul>
           </div>
           <div class="sns">
@@ -117,6 +121,9 @@
   .sns-buttons {
     margin-left: -16px;
   }
+  .links li {
+    margin-bottom: 16px;
+  }
 }
 .footer-copyright {
   margin: 10px 60px;
@@ -137,12 +144,16 @@
 export default {
   name: "MainLayout",
   preFetch({ store, redirect }) {
-    return store.dispatch("home/getPSA");
+    return store.dispatch("home/getPSA").catch(err => {
+      redirect("/error500");
+    });
   },
   computed: {
     psa() {
       let psa = this.$store.state.home.psa;
-      return { message: this.$sanitize(psa.message), link: psa.targetLink };
+      if (psa)
+        return { message: this.$sanitize(psa.message), link: psa.targetLink };
+      return null;
     }
   },
   meta: {

@@ -32,8 +32,9 @@
       }
       const calcWinFn = () => {
         // Get window inner height for carousel size
+        const psabar = document.getElementById('psa-bar');
         document.documentElement.style.setProperty('--window-height', window.innerHeight + 'px');
-        document.documentElement.style.setProperty('--psa-height', document.getElementById('psa-bar').offsetHeight + 'px');
+        document.documentElement.style.setProperty('--psa-height', (psabar ? psabar.offsetHeight : 0) + 'px');
       };
       calcWinFn();
       window.addEventListener('resize', debounce(calcWinFn, 200));

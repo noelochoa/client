@@ -49,8 +49,13 @@ export default {
     }
   },
   methods: {
+    replaceAll: function(txt, search, replace) {
+      return txt.replace(new RegExp(search, "g"), replace);
+    },
+
     // Uploaded Assets URL
     resolveAssetsUrl(file) {
+      file = this.replaceAll(file, /\\/, "\/");
       return process.env.STATIC_URL + "/" + file;
     },
 
