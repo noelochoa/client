@@ -414,7 +414,7 @@
     .product-img {
       width: 100%;
       max-width: 100%;
-      transition: transform 0.25s;
+      transition: transform 0.25s ease-out;
     }
 
     .product-img:hover {
@@ -488,7 +488,7 @@ export default {
       title: this.selectedCategory || "All Products"
     };
   },
-  preFetch({ store, currentRoute, previousRoute }) {
+  preFetch({ store, redirect, currentRoute, previousRoute }) {
     if (previousRoute && currentRoute.path == previousRoute.path) return;
     const cat = currentRoute.params.category;
     const sort = currentRoute.query.sort;

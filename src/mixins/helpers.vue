@@ -50,6 +50,7 @@ export default {
   },
   methods: {
     replaceAll: function(txt, search, replace) {
+      if (!txt) return txt;
       return txt.replace(new RegExp(search, "g"), replace);
     },
 

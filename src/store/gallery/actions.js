@@ -38,8 +38,7 @@ export async function getGalleryItems({ commit }, { category, sort }) {
     }
     return true;
   } catch (err) {
-    this.$router.push("/error500");
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }
 
@@ -61,7 +60,7 @@ export async function getProducts({ commit }, { category, sort }) {
     }
     return true;
   } catch (err) {
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }
 
@@ -89,6 +88,6 @@ export async function getNextProducts({ state }, { category, sort }) {
     }
     return [];
   } catch (err) {
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }

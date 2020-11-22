@@ -39,11 +39,16 @@
         <div class="selected-wrapper">
           <q-img
             native-context-menu
-            :src="selected"
+            :src="
+              !!selected
+                ? resolveAssetsUrl(selected)
+                : 'https://dummyimage.com/640x480/454345/fafafa.png&text=No+Img'
+            "
             spinner-color="primary"
             style="max-height:65vh;"
           >
             <q-icon
+              v-if="!isEmpty(product.images) && product.images.length > 1"
               class="prev-action all-pointer-events"
               size="32px"
               name="keyboard_arrow_left"
@@ -52,6 +57,7 @@
             >
             </q-icon>
             <q-icon
+              v-if="!isEmpty(product.images) && product.images.length > 1"
               class="next-action all-pointer-events"
               size="32px"
               name="keyboard_arrow_right"
@@ -64,100 +70,117 @@
         <div class="thumbnails text-center">
           <q-img
             class="q-ma-sm cursor-pointer"
-            v-for="(imgItm, idx) in thumbnails"
+            v-for="(imgItm, idx) in product.images"
             :key="'thumb-' + idx"
-            :class="{ 'thumb-selected': selected == imgItm.src }"
-            :src="imgItm.src"
+            :class="{ 'thumb-selected': selected == imgItm.image }"
+            :src="resolveAssetsUrl(imgItm.image)"
             spinner-color="primary"
             width="70px"
-            @click="selected = imgItm.src"
+            @click="selected = imgItm.image"
           />
         </div>
       </div>
       <!-- Specs -->
       <div class="info">
         <q-list>
-          <q-expansion-item
-            label="General"
-            header-class="no-hover text-primary ls-sm text-uppercase q-py-lg"
-            expand-icon-class="text-primary"
+          <div
+            v-for="(detailGrp, didx) in product.details"
+            :key="'detail-' + didx"
           >
-            <ul class="bg-secondary q-px-md q-pb-lg text-grey-8">
-              <li class="text-weight-bolder">Usage</li>
-              <li>Weddings</li>
-              <li class="text-weight-bolder q-mt-md">Usage</li>
-              <li>Weddings</li>
-            </ul>
-          </q-expansion-item>
-          <q-separator />
-          <q-expansion-item
-            label="Tech Specs"
-            header-class="no-hover text-primary ls-sm text-uppercase q-py-lg"
-            expand-icon-class="text-primary"
-          >
-            <ul class="bg-secondary q-px-md q-pb-lg text-grey-8">
-              <li class="text-weight-bolder">Usage</li>
-              <li>Weddings</li>
-              <li class="text-weight-bolder q-mt-md">Usage</li>
-              <li>Weddings</li>
-            </ul>
-          </q-expansion-item>
-          <q-separator />
+            <q-expansion-item
+              :label="detailGrp.group"
+              header-class="no-hover text-primary ls-sm text-uppercase q-py-lg"
+              expand-icon-class="text-primary"
+            >
+              <ul class="detail bg-secondary q-px-md q-pb-lg text-grey-8">
+                <li
+                  v-for="(item, key) in detailGrp.items"
+                  :key="'item-' + didx + key"
+                  class="q-mb-md"
+                >
+                  <span class="text-uppercase ls-sm text-weight-bolder">
+                    {{ key }}
+                  </span>
+                  <br />
+                  <span class="text-capitalize">{{ item }}</span>
+                </li>
+              </ul>
+            </q-expansion-item>
+            <q-separator />
+          </div>
         </q-list>
       </div>
       <!-- Order form and others -->
       <div class="oform">
-        <h5 class="text-primary ls-sm">DCS RED test RED test R3</h5>
-        <p class="text-weight-bold text-grey-8 ls-sm">Cakes</p>
+        <h5 class="text-primary ls-sm text-capitalize">{{ product.name }}</h5>
+        <p class="text-weight-bold text-grey-8 ls-sm text-capitalize">
+          {{ product.category.name }}
+        </p>
         <h6 class="text-grey-8 ls-sm">
-          <span class="text-strike">200</span>
-          <span class="text-primary">
-            100
+          <span v-if="!isEmpty(product.discount)" class="text-strike">{{
+            product.baseprice
+          }}</span>
+          <span v-if="!isEmpty(product.discount)" class="text-primary">
+            {{ calcPrice(product.baseprice, product.discount[0].percent) }}
           </span>
+          <span v-else>{{ product.baseprice }}</span>
           PHP
         </h6>
-        <q-form class="order-form" ref="order-form">
+        <q-form class="order-form q-mt-md" ref="order-form">
+          <span class="text-grey-8">Qty (Min: {{ product.minOrderQty }}):</span>
           <q-input
             outlined
             dense
             v-model="order.quantity"
-            class="q-my-md"
+            class="q-mb-md"
             input-style="text-align:center;"
             style="max-width: 140px;"
           >
             <template v-slot:prepend>
-              <q-icon name="remove" class="cursor-pointer" />
+              <q-icon
+                name="remove"
+                class="cursor-pointer"
+                @click="
+                  order.quantity - 1 >= product.minOrderQty
+                    ? (order.quantity -= 1)
+                    : false
+                "
+              />
             </template>
             <template v-slot:append>
-              <q-icon name="add" class="cursor-pointer" />
+              <q-icon
+                name="add"
+                class="cursor-pointer"
+                @click="
+                  order.quantity + 1 <= 100 ? (order.quantity += 1) : false
+                "
+              />
             </template>
           </q-input>
-          <span class="text-grey-8">Design:</span>
-          <q-select
-            popup-content-class="bg-secondary"
-            outlined
-            dense
-            emit-value
-            map-options
-            :options="testoptions"
-            v-model="order.test"
-            @input="onSelOption"
-            lazy-rules
-            :rules="[val => !!val]"
-          />
-          <span class="text-grey-8">Design:</span>
-          <q-select
-            popup-content-class="bg-secondary"
-            outlined
-            dense
-            emit-value
-            map-options
-            :options="testoptions"
-            v-model="order.test"
-            @input="onSelOption"
-            lazy-rules
-            :rules="[val => !!val]"
-          />
+          <div v-for="(option, idx) in product.options" :key="'opt-' + idx">
+            <span class="text-grey-8">{{ option.attribute }}:</span>
+            <q-select
+              popup-content-class="bg-secondary"
+              outlined
+              dense
+              emit-value
+              map-options
+              :options="toSelOptions(option.attribute, option.choices)"
+              v-model="order.options[idx]"
+              @input="onSelOption(idx)"
+              lazy-rules
+              :rules="[val => !!val]"
+            />
+            <q-input
+              v-if="isOtherSelected(order.options[idx])"
+              dense
+              outlined
+              placeholder="Please specify"
+              v-model="order.otherVal[idx]"
+              lazy-rules
+              :rules="[val => !!val]"
+            />
+          </div>
           <q-btn
             unelevated
             type="submit"
@@ -169,10 +192,7 @@
         </q-form>
         <div class="description q-mt-lg text-grey-8 text-subtitle1">
           <h6>About this product:</h6>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui quam
-          quis, obcaecati adipisci laudantium aperiam vel ea dignissimos unde
-          quod mollitia reiciendis. Repellendus ipsa voluptates nam aut non
-          fugiat dignissimos.
+          {{ product.description }}
         </div>
       </div>
     </div>
@@ -264,115 +284,55 @@
       <h5 class="ls-sm text-primary">RELATED ITEMS</h5>
       <div class="content">
         <div class="product-list">
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
+          <div
+            class="product-item"
+            v-for="(product, pidx) in related"
+            :key="'prod-' + pidx"
+          >
+            <router-link :to="'/buy/' + product.seoname">
+              <q-img
+                class="product-img cursor-pointer"
+                :src="
+                  product.image
+                    ? resolveAssetsUrl(product.image)
+                    : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
+                "
+                native-context-menu
+                :ratio="1"
               >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
+                <q-icon
+                  v-if="!isEmpty(product.discount)"
+                  class="absolute all-pointer-events"
+                  size="32px"
+                  name="card_giftcard"
+                  color="white"
+                  style="top: 8px; left: 8px"
                 >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
+                  <q-tooltip
+                    content-class="bg-primary text-accent text-subtitle2"
+                  >
+                    {{ product.discount[0].percent }}% OFF
+                  </q-tooltip>
+                </q-icon>
+              </q-img>
+            </router-link>
+            <div class="q-mt-md text-center cursor-pointer">
+              <router-link
+                :to="'/buy/' + product.seoname"
+                class="product-link text-h6 text-primary ls-sm"
               >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
+                {{ product.name }}
+              </router-link>
             </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 1
-            </div>
-            <div class="ls-sm q-mt-sm text-center">from 200 PHP</div>
-          </div>
-
-          <div class="product-item">
-            <q-img
-              class="product-img"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              native-context-menu
-              :ratio="1"
-            >
-              <q-icon
-                class="absolute all-pointer-events"
-                size="32px"
-                name="card_giftcard"
-                color="white"
-                style="top: 8px; left: 8px"
-              >
-                <q-tooltip
-                  content-class="bg-primary text-accent text-subtitle2"
-                >
-                  On Sale
-                </q-tooltip>
-              </q-icon>
-            </q-img>
-            <div class="text-h6 text-primary ls-sm q-mt-md text-center">
-              PRODUCT NAME 2
-            </div>
-            <div class="ls-sm q-mt-sm text-center text-dark">
-              from
-              <span class="text-strike"> 200</span>
-              <span class="text-primary">
-                100
+            <div class="ls-sm q-mt-sm text-center">
+              <span v-if="!isEmpty(product.options)">from </span>
+              <span v-if="!isEmpty(product.discount)" class="text-strike">{{
+                product.baseprice
+              }}</span>
+              <span v-if="!isEmpty(product.discount)" class="text-primary">
+                {{ calcPrice(product.baseprice, product.discount[0].percent) }}
               </span>
+              <span v-else>{{ product.baseprice }}</span>
               PHP
             </div>
           </div>
@@ -426,9 +386,6 @@
   grid-gap: 50px;
   justify-content: center;
 
-  & > div {
-    min-height: 240px;
-  }
   .gallery {
     grid-area: gallery;
     min-height: 480px;
@@ -436,6 +393,10 @@
   .info {
     grid-area: info;
     border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+    .detail li span {
+      font-family: "Source Sans Pro";
+    }
   }
   .oform {
     grid-area: oform;
@@ -527,6 +488,11 @@
     .product-img {
       width: 100%;
       max-width: 100%;
+      transition: transform 0.25s ease-out;
+    }
+
+    .product-img:hover {
+      transform: translate(2px, 2px);
     }
   }
 }
@@ -567,6 +533,7 @@
 }
 </style>
 <script>
+import { mapGetters, mapActions } from "vuex";
 import HelperMixin from "../../mixins/helpers";
 
 export default {
@@ -577,37 +544,60 @@ export default {
       title: this.title || "Product"
     };
   },
-  created() {},
-  mounted() {},
+  preFetch({ store, redirect, currentRoute }) {
+    const name = currentRoute.params.seoname;
+    return store
+      .dispatch("buy/getProductDetails", {
+        seoname: name
+      })
+      .catch(err => {
+        if (err.response.status == 404) {
+          redirect("/error404");
+        } else {
+          redirect("/error500");
+        }
+      });
+  },
+  watch: {
+    $route(to, from) {
+      if (to.path !== from.path) {
+        // Refresh on route change
+        this.getRelatedProducts(4);
+      }
+    }
+  },
+  computed: {
+    ...mapGetters("buy", ["product", "related"])
+  },
+  created() {
+    this.title = this.product.name;
+    this.order.quantity = this.product.minOrderQty;
+
+    // Preselect options if any
+    if (!this.isEmpty(this.product.options)) {
+      this.product.options.forEach((item, idx) => {
+        // default to last item
+        this.order.options[idx] = item.choices.slice(-1).pop();
+      });
+    }
+    // Preselect image
+    if (!this.isEmpty(this.product.images)) {
+      this.selected = this.product.images[0].image;
+    }
+  },
+  mounted() {
+    this.getRelatedProducts(4);
+  },
   data() {
     return {
       title: "",
-      slide: 1,
-      selected: "https://cdn.quasar.dev/img/mountains.jpg",
-      thumbnails: [
-        {
-          src:
-            "https://cdn.shopify.com/s/files/1/0054/0878/4458/products/Meka_BoG_7bbbf176-f8b6-431e-bce2-a09059ee78f6_600x.png?v=1600107926"
-        },
-        {
-          src:
-            "https://cdn.shopify.com/s/files/1/0054/0878/4458/products/8008-Geo-Deskmat_700x.png?v=1564539406"
-        },
-        {
-          src:
-            "https://cdn.shopify.com/s/files/1/0054/0878/4458/products/Meka_Mat_600x.jpg?v=1600107926"
-        },
-        {
-          src:
-            "https://cdn.shopify.com/s/files/1/0054/0878/4458/products/image_800x.png?v=1599369687"
-        },
-        { src: "https://cdn.quasar.dev/img/mountains.jpg" }
-      ],
+      selected: "",
       filter: false,
       opaque: false,
       order: {
-        quantity: 1,
-        test: 1
+        quantity: 0,
+        options: [],
+        otherVal: []
       },
       comments: [{}, {}, {}],
       comment: "",
@@ -619,22 +609,65 @@ export default {
     };
   },
   methods: {
+    ...mapActions("buy", ["findRelatedProducts"]),
+
     _findSelected() {
-      return this.thumbnails.findIndex(item => {
-        return this.selected === item.src;
+      let thumbnails = this.product.images.slice();
+      return thumbnails.findIndex(item => {
+        return this.selected === item.image;
       });
     },
+
+    toSelOptions(key, obj) {
+      if (obj) {
+        return obj.map(item => {
+          return {
+            label:
+              item.value +
+              (item.price >= 0
+                ? `(+${item.price}  PHP)`
+                : `(${item.price} PHP)`),
+            value: item,
+            key: key
+          };
+        });
+      }
+      return obj;
+    },
+
+    onSelOption(val) {
+      console.log(this.order.options[val]);
+    },
+
+    isOtherSelected(obj) {
+      if (obj) {
+        return obj.value == "Other";
+      }
+
+      return false;
+    },
+
     onNextImg(evt) {
       let idx = this._findSelected() + 1;
-      if (idx > this.thumbnails.length - 1) idx = 0; // loop
-      this.selected = this.thumbnails[idx].src;
+      let thumbnails = this.product.images.slice();
+      if (idx > thumbnails.length - 1) idx = 0; // loop
+      this.selected = thumbnails[idx].image;
     },
     onPrevImg(evt) {
       let idx = this._findSelected() - 1;
-      if (idx < 0) idx = this.thumbnails.length - 1; // loop
-      this.selected = this.thumbnails[idx].src;
+      let thumbnails = this.product.images.slice();
+      if (idx < 0) idx = thumbnails.length - 1; // loop
+      this.selected = thumbnails[idx].image;
     },
-    onSelOption(val) {}
+
+    getRelatedProducts(limit = 4) {
+      if (this.product) {
+        this.findRelatedProducts({
+          pID: this.product.id,
+          limit: limit
+        });
+      }
+    }
   }
 };
 </script>

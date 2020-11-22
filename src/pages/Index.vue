@@ -233,7 +233,7 @@
     .product-img {
       width: 100%;
       max-width: 100%;
-      transition: transform 0.25s;
+      transition: transform 0.25s ease-out;
     }
 
     .product-img:hover {
