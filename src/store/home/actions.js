@@ -28,7 +28,11 @@ export async function getProducts({ commit }) {
   try {
     resp = await Promise.all([
       this.$axios.get("/api/products/featured"),
-      this.$axios.get("/api/products/new")
+      this.$axios.get("/api/products/new", {
+        params: {
+          l: 4
+        }
+      })
     ]);
     if (resp && resp[0].data && resp[1].data) {
       commit("SET_FEATURED", resp[0].data);
