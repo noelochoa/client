@@ -47,6 +47,6 @@ export function product(state) {
   return ret;
 }
 
-export function getComments(state) {
+export function comments(state) {
   return state.comments;
 }

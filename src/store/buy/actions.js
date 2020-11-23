@@ -32,3 +32,20 @@ export async function findRelatedProducts({ commit }, { pID, query, limit }) {
     return Promise.reject(err);
   }
 }
+
+export async function postComment({ commit }, { comment, author, product }) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/comments", {
+      comment,
+      author,
+      product
+    });
+    if (resp && resp.data) {
+      commit("UNSHIFT_COMMENT", resp.data);
+    }
+    return true;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}

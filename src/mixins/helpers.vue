@@ -1,4 +1,5 @@
 <script>
+const moment = require("moment");
 import { scroll } from "quasar";
 const { getScrollTarget, setScrollPosition } = scroll;
 
@@ -49,15 +50,41 @@ export default {
     }
   },
   methods: {
+    // Replace all occurrences of search from txt
     replaceAll: function(txt, search, replace) {
       if (!txt) return txt;
       return txt.replace(new RegExp(search, "g"), replace);
+    },
+
+    //change time to elapsed ( X time ago )
+    toTimeElapsed(date) {
+      if (date) {
+        return moment(date).fromNow();
+      }
+      return "";
+    },
+
+    censorTxt(txt) {
+      if (txt) {
+        return txt.substring(0, 1).padEnd(txt.length, "*");
+      }
+      return "";
     },
 
     // Uploaded Assets URL
     resolveAssetsUrl(file) {
       file = this.replaceAll(file, /\\/, "\/");
       return process.env.STATIC_URL + "/" + file;
+    },
+
+    // Notification
+    showNotif: function(type, msg) {
+      this.$q.notify({
+        type: type,
+        timeout: "3000",
+        position: "top",
+        message: msg
+      });
     },
 
     // Compute new price

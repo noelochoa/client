@@ -42,7 +42,7 @@
             :src="
               !!selected
                 ? resolveAssetsUrl(selected)
-                : 'https://dummyimage.com/640x480/454345/fafafa.png&text=No+Img'
+                : 'https://dummyimage.com/800x600/454345/fafafa.png&text=No+Img'
             "
             spinner-color="primary"
             style="max-height:65vh;"
@@ -200,62 +200,77 @@
     <!-- COMMENTS -->
     <div class="comments">
       <h5 class="ls-sm text-primary">COMMENTS</h5>
-      <div class="content text-grey-8">
-        <div class="comments-list">
-          <ul
-            v-for="(comment, cidx) in comments"
-            :key="'comment-' + cidx"
-            class="flex flex-center"
-          >
+      <div
+        class="content text-grey-8 flex"
+        :class="{ 'justify-center': isEmpty(comments) }"
+      >
+        <div class="comments-list" v-if="!isEmpty(comments)">
+          <div v-for="(comment, cidx) in comments" :key="'comment-' + cidx">
             <!-- COMMENT -->
-            <q-item class="q-mt-xl level-1">
+            <q-item class="q-mt-xl q-mr-xl level-1" style="margin-left: auto;">
               <q-item-section avatar>
                 <q-avatar color="primary" text-color="white">
-                  A
+                  {{ comment.author.substring(0, 1) }}
                 </q-avatar>
               </q-item-section>
 
               <q-item-section>
-                <q-item-label class="author">Noel Ochoa</q-item-label>
-                <q-item-label class="message">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex
-                  eaque est nisi, cumque eius aspernatur ipsum porro commodi,
-                  praesentium aliquid possimus distinctio delectus reiciendis
-                  hic eligendi, ea fugiat qui aliquam! Lorem ipsum dolor sit
-                  amet consectetur adipisicing elit.
+                <q-item-label class="author">
+                  {{
+                    comment.isFlagged
+                      ? censorTxt(comment.author)
+                      : comment.author
+                  }}
                 </q-item-label>
+                <q-item-label
+                  class="message"
+                  :class="{ 'text-negative': comment.isFlagged }"
+                  v-html="$sanitize(comment.comment)"
+                />
               </q-item-section>
 
               <q-item-section side top>
-                <q-item-label class="message">5 min ago</q-item-label>
+                <q-item-label class="message">
+                  {{ toTimeElapsed(comment.created) }}
+                </q-item-label>
               </q-item-section>
             </q-item>
             <!-- REPLY (if applicable) -->
-            <q-item class="q-mt-md level-2">
+            <q-item
+              class="q-mt-md q-mr-xl level-2"
+              style="margin-left: auto;"
+              v-if="comment.reply"
+            >
               <q-item-section avatar>
                 <q-avatar color="primary" text-color="white">
-                  A
+                  {{ comment.replyAuthor.substring(0, 1) }}
                 </q-avatar>
               </q-item-section>
 
               <q-item-section>
-                <q-item-label class="author text-underline">Admin</q-item-label>
-                <q-item-label class="message">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex
-                  eaque est nisi, cumque eius aspernatur ipsum porro commodi,
-                  praesentium aliquid possimus distinctio delectus reiciendis
-                  hic eligendi, ea fugiat qui aliquam! Lorem ipsum dolor sit
-                  amet consectetur adipisicing elit.
+                <q-item-label class="author">
+                  {{ comment.replyAuthor }}
+                  <span class="text-weight-light text-caption">(Support)</span>
                 </q-item-label>
+                <q-item-label
+                  class="message"
+                  v-html="$sanitize(comment.reply)"
+                />
               </q-item-section>
 
               <q-item-section side top>
-                <q-item-label class="message">5 min ago</q-item-label>
+                <q-item-label class="message" v-if="comment.replied">
+                  {{ toTimeElapsed(comment.replied) }}
+                </q-item-label>
               </q-item-section>
             </q-item>
-          </ul>
+          </div>
         </div>
-        <q-form class="comment-form q-mt-lg" ref="comment-form">
+        <q-form
+          class="comment-form q-mt-lg"
+          ref="comment-form"
+          @submit.prevent.stop="onPost"
+        >
           <q-editor
             ref="qTxtEditor"
             class="q-my-lg comment-editor"
@@ -269,6 +284,7 @@
             ]"
           />
           <q-btn
+            :loading="loading"
             unelevated
             type="submit"
             color="red-6 ls-sm"
@@ -342,6 +358,15 @@
   </q-page>
 </template>
 
+<style lang="scss">
+.message {
+  font-size: 15px;
+  * {
+    font-size: 15px;
+    font-family: "Source Sans Pro" !important;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .mainpage > div {
   width: 100%;
@@ -395,7 +420,7 @@
     border-top: 1px solid rgba(0, 0, 0, 0.12);
 
     .detail li span {
-      font-family: "Source Sans Pro";
+      font-family: "Source Sans Pro" !important;
     }
   }
   .oform {
@@ -455,6 +480,7 @@
       font-family: "Source Sans Pro" !important;
       line-height: 1.5em !important;
     }
+
     .level-1 {
       max-width: 720px;
     }
@@ -465,9 +491,6 @@
     .author {
       font-size: 16px;
       font-weight: 700;
-    }
-    .message {
-      font-size: 15px;
     }
   }
 
@@ -533,8 +556,8 @@
 }
 </style>
 <script>
-import { mapGetters, mapActions } from "vuex";
 import HelperMixin from "../../mixins/helpers";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Product",
@@ -567,7 +590,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("buy", ["product", "related"])
+    ...mapGetters("buy", ["product", "related", "comments"])
   },
   created() {
     this.title = this.product.name;
@@ -590,6 +613,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       title: "",
       selected: "",
       filter: false,
@@ -599,7 +623,6 @@ export default {
         options: [],
         otherVal: []
       },
-      comments: [{}, {}, {}],
       comment: "",
       testoptions: [
         { label: "opt1", value: 1 },
@@ -609,7 +632,16 @@ export default {
     };
   },
   methods: {
-    ...mapActions("buy", ["findRelatedProducts"]),
+    ...mapActions("buy", ["findRelatedProducts", "postComment"]),
+
+    _isContentEmpty(val) {
+      if (!val) return true;
+      val = this.replaceAll(val, "&nbsp;", "");
+      val = this.replaceAll(val, " ", "");
+      val = val.replace(/(<([^>]+)>)/gi, "").trim();
+
+      return val.length == 0 ? true : false;
+    },
 
     _findSelected() {
       let thumbnails = this.product.images.slice();
@@ -666,6 +698,31 @@ export default {
           pID: this.product.id,
           limit: limit
         });
+      }
+    },
+
+    onPost: async function(evt) {
+      this.loading = true;
+      if (!this._isContentEmpty(this.comment)) {
+        try {
+          await this.postComment({
+            comment: this.comment,
+            product: this.product.id,
+            author: "5e5de25cf4d1c30a985870f8" // TODO !!!
+          });
+          this.comment = ""; // Reset
+          this.showNotif("positive", "Your comment has been posted.");
+        } catch (err) {
+          this.showNotif(
+            "negative",
+            "Error while posting comment. Please ensure your account has been verified."
+          );
+        } finally {
+          this.loading = false;
+        }
+      } else {
+        this.$refs.qTxtEditor.focus();
+        this.loading = false;
       }
     }
   }
