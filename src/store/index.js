@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import home from "./home";
 import gallery from "./gallery";
 import buy from "./buy";
+import auth from "./auth";
 
 Vue.use(Vuex);
 
@@ -21,7 +22,8 @@ export default function(/* { ssrContext } */) {
     modules: {
       home,
       gallery,
-      buy
+      buy,
+      auth
     },
 
     // enable strict mode (adds overhead!)

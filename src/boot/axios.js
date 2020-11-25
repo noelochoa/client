@@ -1,9 +1,8 @@
-// import { Cookies } from "quasar";
 import axios from "axios";
 import inject from "./inject";
-// import createAuthRefreshInterceptor from "axios-auth-refresh";
+import createAuthRefreshInterceptor from "axios-auth-refresh";
 
-export default inject(async function({ app, store, ssrContext, redirect }) {
+export default inject(async function({ store, ssrContext }) {
   const instance = axios.create({
     baseURL: process.env.API
   });
@@ -25,6 +24,33 @@ export default inject(async function({ app, store, ssrContext, redirect }) {
       return Promise.reject(error);
     }
   );
+
+  instance.interceptors.response.use(
+    response => {
+      return response;
+    },
+    error => {
+      if (
+        error.response.status === 403 ||
+        error.config.url == process.env.API + "/api/profile/refresh"
+      ) {
+        store.dispatch("auth/resetAuth");
+        // redirect("/login");
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  const refreshAuthLogic = fReq =>
+    instance.post("/api/profile/refresh").then(resp => {
+      // Renew CSRF Token
+      if (resp.data && resp.data.xsrf) {
+        store.dispatch("auth/setXSRFToken", resp.data.xsrf);
+      }
+      return Promise.resolve();
+    });
+
+  createAuthRefreshInterceptor(instance, refreshAuthLogic);
 
   return {
     axios: instance

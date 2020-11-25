@@ -1,36 +1,7 @@
 <template>
   <q-page class="mainpage">
     <!-- NAV -->
-    <div class="navigation opaque-nav">
-      <div>
-        <ul class="left-nav">
-          <li class="ls-sm">
-            <router-link to="/" class="header-link hover-primary"
-              >HOME</router-link
-            >
-          </li>
-          <li class="ls-sm">
-            <router-link to="/products" class="header-link hover-primary">
-              SHOP
-            </router-link>
-          </li>
-        </ul>
-      </div>
-      <div>
-        <ul class="right-nav">
-          <li class="ls-sm">
-            <router-link to="/account" class="header-link hover-primary"
-              >ACCOUNT</router-link
-            >
-          </li>
-          <li class="ls-sm">
-            <router-link to="/" class="header-link hover-primary">
-              BASKET (0)
-            </router-link>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <Navigation v-bind="{ opaque: true }"> </Navigation>
 
     <!-- LOGIN/REGISTER PAGE -->
     <div class="grid">
@@ -40,7 +11,7 @@
       <div class="login text-grey-8">
         <h5 class="ls-sm text-primary">LOGIN</h5>
         <p class="text-subtitle1">Enter your e-mail and password:</p>
-        <q-form ref="login-form">
+        <q-form ref="login-form" @submit.prevent.stop="onLogin">
           <p v-if="loginErr" class="error-msg text-negative bg-red-3 q-py-sm">
             {{ loginErr }}
           </p>
@@ -75,6 +46,7 @@
             ]"
           />
           <q-btn
+            :loading="loading"
             class="full-width q-mt-md"
             unelevated
             type="submit"
@@ -88,7 +60,7 @@
       <div class="register text-grey-8">
         <h5 class="ls-sm text-primary">REGISTER</h5>
         <p class="text-subtitle1">Fill out your information below:</p>
-        <q-form ref="register-form">
+        <q-form ref="register-form" @submit.prevent.stop="onRegister">
           <p
             v-if="registerErr"
             class="error-msg text-negative bg-red-3 q-py-sm"
@@ -161,6 +133,7 @@
             color="primary"
           />
           <q-btn
+            :loading="rloading"
             class="full-width q-mt-lg"
             unelevated
             type="submit"
@@ -178,36 +151,6 @@
 <style lang="scss" scoped>
 .mainpage > div {
   width: 100%;
-}
-.navigation {
-  height: 106px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: $link;
-  transition: background 0.5s ease-out, color 0.25s ease-out;
-}
-.navigation div {
-  flex: 0 1 auto;
-}
-.left-nav {
-  margin-left: 24px;
-}
-.right-nav {
-  margin-right: 24px;
-}
-.right-nav li,
-.left-nav li {
-  font-size: 14px;
-  margin: 0 14px;
-  display: inline-block;
-  flex-grow: 0;
-  flex-basis: 240px;
-}
-.opaque-nav {
-  box-shadow: 0 0.1rem #eecfc8;
-  background: $navbg;
-  color: $dark;
 }
 .grid {
   height: 85vh;
@@ -266,20 +209,31 @@
 </style>
 <script>
 import HelperMixin from "../../mixins/helpers";
+import Navigation from "../../components/Navigation";
 
 export default {
   name: "Account",
   mixins: [HelperMixin],
+  components: { Navigation },
+
+  preFetch({ store, redirect }) {
+    if (store.getters["auth/isAuthenticated"]) {
+      redirect("/profile");
+    }
+  },
+
   meta() {
     return {
-      title: this.title || "Product"
+      title: "Account"
     };
   },
   created() {},
   mounted() {},
   data() {
     return {
-      loginErr: "AAAAAAAAAAA",
+      loginErr: "",
+      loading: false,
+      rloading: false,
       login: {
         email: "",
         password: ""
@@ -298,6 +252,32 @@ export default {
     _isValidEmail(val) {
       const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
       return emailPattern.test(val) || "Invalid email format";
+    },
+
+    async onLogin() {
+      this.loginErr = "";
+      this.loading = true;
+      try {
+        await this.$store.dispatch("auth/signin", { ...this.login });
+        this.$router.push("/").catch(err => {});
+      } catch (err) {
+        this.loginErr = err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async onRegister() {
+      this.registerErr = "";
+      this.rloading = true;
+      try {
+        await this.$store.dispatch("auth/register", { ...this.register });
+        this.$router.push("/").catch(err => {});
+      } catch (err) {
+        this.registerErr = err;
+      } finally {
+        this.rloading = false;
+      }
     }
   }
 };

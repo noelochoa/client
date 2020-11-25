@@ -22,14 +22,14 @@ module.exports.extendApp = function({ app, ssr }) {
   /*
       API ROUTES
     */
-  app.use("/api/users/login", bodyParser.json(), function(req, res) {
+  app.use("/api/profile/login", bodyParser.json(), function(req, res) {
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).send({ error: "Invalid request" });
     }
     let options = {
       method: "POST",
-      uri: API_URL + "/users/login",
+      uri: API_URL + "/profile/login",
       body: {
         email,
         password
@@ -38,14 +38,14 @@ module.exports.extendApp = function({ app, ssr }) {
     };
     rp(options)
       .then(function(body) {
-        const { token, cmsuser, xsrf } = body;
-        res.cookie("_JWT_CMS", token, {
+        const { token, user, xsrf } = body;
+        res.cookie("_JWT_WEB", token, {
           maxAge: 60 * 60 * 1000 * 24 * 7, //1 week
           httpOnly: true,
           sameSite: "Strict",
           secure: prod
         });
-        return res.status(200).send({ cmsuser, xsrf });
+        return res.status(200).send({ user, xsrf });
       })
       .catch(function(err) {
         const { response } = err;
@@ -59,13 +59,93 @@ module.exports.extendApp = function({ app, ssr }) {
       });
   });
 
+  app.use("/api/profile/register", bodyParser.json(), function(req, res) {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).send({ error: "Invalid request" });
+    }
+    let options = {
+      method: "POST",
+      uri: API_URL + "/profile/register",
+      body: {
+        ...req.body
+      },
+      json: true
+    };
+    rp(options)
+      .then(function(body) {
+        const { token, user, xsrf } = body;
+        res.cookie("_JWT_WEB", token, {
+          maxAge: 60 * 60 * 1000 * 24 * 7, //1 week
+          httpOnly: true,
+          sameSite: "Strict",
+          secure: prod
+        });
+        return res.status(200).send({ user, xsrf });
+      })
+      .catch(function(err) {
+        const { response } = err;
+        if (response) {
+          return res.status(response.statusCode).send(response.body);
+        } else {
+          return res.status(500).send({
+            error: "Unexpected error has occurred."
+          });
+        }
+      });
+  });
+
+  app.use("/api/profile/refresh", cookieParser(), function(req, res) {
+    console.log(req.originalUrl, req.path, req.query);
+    if (!req.cookies._JWT_WEB || !req.headers["x-csrf-token"]) {
+      return res.status(403).send({
+        error: "Not authorized to access this resource."
+      });
+    }
+    let options = {
+      method: "POST",
+      uri: API_URL + "/profile/refresh",
+      headers: {
+        Authorization: "Bearer " + req.cookies._JWT_WEB,
+        "x-csrf-token": req.headers["x-csrf-token"]
+      },
+      json: true
+    };
+    rp(options)
+      .then(function(body) {
+        if (!body) return res.send(200).send();
+        const { token, xsrf } = body;
+        // console.log(token, xsrf);
+        res.cookie("_JWT_WEB", token, {
+          maxAge: 60 * 60 * 1000 * 24 * 7, //1 week
+          httpOnly: true,
+          sameSite: "Strict",
+          secure: prod
+        });
+
+        return res.send({ xsrf });
+      })
+      .catch(function(err) {
+        const { response } = err;
+        if (response) {
+          return res.status(response.statusCode).send(response.body);
+        } else {
+          console.log("err", err);
+          return res.status(500).send({
+            error: "Unexpected error has occurred."
+          });
+        }
+      });
+  });
+
   app.use("/api", cookieParser(), function(req, res) {
     console.log(req.originalUrl, req.path, req.query);
+    // console.log(req.headers);
     const url = API_URL + req.path;
 
     // Attach Auth
-    if (req.cookies._JWT_CMS) {
-      req.headers.authorization = "Bearer " + req.cookies._JWT_CMS;
+    if (req.cookies._JWT_WEB) {
+      req.headers.authorization = "Bearer " + req.cookies._JWT_WEB;
     }
     const proxy = request({
       url: url,

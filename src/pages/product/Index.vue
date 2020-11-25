@@ -1,36 +1,7 @@
 <template>
   <q-page class="mainpage">
     <!-- NAV -->
-    <div class="navigation opaque-nav">
-      <div>
-        <ul class="left-nav">
-          <li class="ls-sm">
-            <router-link to="/" class="header-link hover-primary"
-              >HOME</router-link
-            >
-          </li>
-          <li class="ls-sm">
-            <router-link to="/products" class="header-link hover-primary">
-              SHOP
-            </router-link>
-          </li>
-        </ul>
-      </div>
-      <div>
-        <ul class="right-nav">
-          <li class="ls-sm">
-            <router-link to="/account" class="header-link hover-primary"
-              >ACCOUNT</router-link
-            >
-          </li>
-          <li class="ls-sm">
-            <router-link to="/" class="header-link hover-primary">
-              BASKET (0)
-            </router-link>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <Navigation v-bind="{ opaque: true }"> </Navigation>
 
     <!-- PRODUCT PAGE -->
     <div class="grid">
@@ -557,11 +528,13 @@
 </style>
 <script>
 import HelperMixin from "../../mixins/helpers";
+import Navigation from "../../components/Navigation";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Product",
   mixins: [HelperMixin],
+  components: { Navigation },
   meta() {
     return {
       title: this.title || "Product"
