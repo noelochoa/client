@@ -2,9 +2,9 @@
 // Default
 @font-face {
   font-family: "Source Sans Pro";
-  src: url("/fonts/SourceSansPro-Regular.woff2") format("woff2"),
-    url("/fonts/SourceSansPro-Regular.woff") format("woff");
-  font-weight: 400;
+  src: url("/fonts/source-sans-pro-v14-latin-300.woff2") format("woff2"),
+    url("/fonts/source-sans-pro-v14-latin-300.woff") format("woff");
+  font-weight: 300;
   font-style: normal, oblique, italic;
   font-display: swap;
 }
@@ -67,9 +67,11 @@ li {
 p,
 a,
 li,
+.text-field,
+.text-field *,
 .text-comment,
 .text-comment * {
-  font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+  font-family: "Source Sans Pro" !important;
 }
 
 h1,
@@ -91,17 +93,26 @@ h6,
   text-transform: uppercase !important;
 }
 
-.q-field__messages {
+.q-field__messages,
+.q-field__messages * {
   font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
   font-size: 14px;
 }
 
-.hover-underline:hover {
-  text-decoration: underline;
+.q-field--error .q-field__bottom {
+  padding-left: 0px;
 }
 
-.hover-primary:hover {
-  color: $primary;
+.hover {
+  &-underline:hover {
+    text-decoration: underline;
+  }
+  &-primary:hover {
+    color: $primary;
+  }
+  &-dark:hover {
+    color: $dark;
+  }
 }
 
 .bg-transparent {
@@ -138,18 +149,48 @@ h6,
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #323535;
+  background-color: $red-4;
   border-radius: 20px;
   border: 6px solid transparent;
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #4d5e61;
+  background-color: $red-5;
 }
 
 /* Moz Scrollbar */
 :root {
-  scrollbar-color: #323535 transparent !important;
+  scrollbar-color: $red-4 transparent !important;
   scrollbar-width: thin !important;
 }
+
+/* Vue Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+/*
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 1s;
+}
+.slide-leave-active {
+  position: absolute;
+}
+.slide-move {
+  transition: transform 1s;
+}
+.slide-enter {
+  transform: translateY(30px);
+  opacity: 0;
+}
+.slide-leave-to {
+  transform: translateY(30px);
+  opacity: 0;
+}
+*/

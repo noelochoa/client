@@ -4,7 +4,8 @@ import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 export default inject(async function({ store, ssrContext }) {
   const instance = axios.create({
-    baseURL: process.env.API
+    baseURL: process.env.API,
+    withCredentials: true
   });
 
   instance.interceptors.request.use(
@@ -35,9 +36,10 @@ export default inject(async function({ store, ssrContext }) {
         error.config.url == process.env.API + "/api/profile/refresh"
       ) {
         store.dispatch("auth/resetAuth");
-        // redirect("/login");
+        // redirect("/account");
       }
       return Promise.reject(error);
+      ``;
     }
   );
 

@@ -33,12 +33,19 @@ export async function findRelatedProducts({ commit }, { pID, query, limit }) {
   }
 }
 
-export async function postComment({ commit }, { comment, author, product }) {
+export async function postComment(
+  { commit, rootGetters },
+  { comment, product }
+) {
   let resp;
   try {
+    if (!rootGetters["auth/isVerified"]) {
+      throw "Unauthenticated or account is not verified.";
+    }
+    console.log(rootGetters["auth/getCustomerID"]);
     resp = await this.$axios.post("/api/comments", {
       comment,
-      author,
+      author: rootGetters["auth/getCustomerID"],
       product
     });
     if (resp && resp.data) {

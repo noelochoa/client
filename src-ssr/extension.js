@@ -113,7 +113,7 @@ module.exports.extendApp = function({ app, ssr }) {
     };
     rp(options)
       .then(function(body) {
-        if (!body) return res.send(200).send();
+        if (!body) return res.status(200).send();
         const { token, xsrf } = body;
         // console.log(token, xsrf);
         res.cookie("_JWT_WEB", token, {

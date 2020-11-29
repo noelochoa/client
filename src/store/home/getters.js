@@ -16,27 +16,33 @@ export function getFeatured(state) {
   return ret;
 }
 
-export function getNewItems(state) {
+export function getNewItems(state, getters, rootState, rootGetters) {
   let ret = [];
 
   if (state.newItems && state.newItems.length > 0) {
-    state.newItems.map(item => {
+    state.newItems.forEach(item => {
       let img = item.images
         ? item.images.find(img => img.imageType == "gallery")
         : null;
-      ret.push({
+      let target = rootGetters["auth/isReseller"] ? "reseller" : "all";
+
+      let product = {
         name: item.name,
         seoname: item.seoname,
         options: item.options,
         baseprice: item.basePrice || "0",
-        // TODO!!!
         discount: item.discount
           ? item.discount.filter(
-              el => el.target == "all" || el.target == "reseller"
+              el => el.target == target || el.target == "all"
             )
           : [],
         image: img ? img.image : ""
+      };
+      // Use largest discount
+      product.discount.sort((a, b) => {
+        return b.percent - a.percent;
       });
+      ret.push(product);
     });
   }
 

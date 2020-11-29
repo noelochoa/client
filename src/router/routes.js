@@ -20,14 +20,29 @@ const routes = [
   {
     path: "/profile",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/profile/Index.vue") }]
+    children: [
+      { path: "", component: () => import("pages/profile/Index.vue") },
+      { path: "verify", component: () => import("pages/profile/Verify.vue") },
+      {
+        path: "verifySMS",
+        component: () => import("pages/profile/VerifySMS.vue")
+      },
+      { path: "edit", component: () => import("pages/profile/Edit.vue") }
+    ]
   },
 
   // LOGIN & REGISTER ROUTE
   {
     path: "/account",
     component: () => import("layouts/AccountLayout.vue"),
-    children: [{ path: "", component: () => import("pages/account/Index.vue") }]
+    children: [
+      { path: "", component: () => import("pages/account/Index.vue") },
+      { path: "reset", component: () => import("pages/account/ResetPW.vue") },
+      {
+        path: "resetpw",
+        component: () => import("pages/account/ChangePW.vue")
+      }
+    ]
   },
 
   // ERROR 500

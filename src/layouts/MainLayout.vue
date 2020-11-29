@@ -11,7 +11,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-footer class="bg-accent text-grey-8 footer">
+    <q-footer v-if="showFooter" class="bg-accent text-grey-8 footer">
       <div class="footer-content">
         <div class="footer-inner flex">
           <div class="about">
@@ -172,8 +172,14 @@ export default {
       }
     }
   },
+  mounted() {
+    // Deferred footer layout
+    this.showFooter = true;
+  },
+
   data() {
     return {
+      showFooter: false,
       leftDrawerOpen: false
     };
   }

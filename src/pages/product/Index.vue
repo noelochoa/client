@@ -176,66 +176,73 @@
         :class="{ 'justify-center': isEmpty(comments) }"
       >
         <div class="comments-list" v-if="!isEmpty(comments)">
-          <div v-for="(comment, cidx) in comments" :key="'comment-' + cidx">
-            <!-- COMMENT -->
-            <q-item class="q-mt-xl q-mr-xl level-1" style="margin-left: auto;">
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  {{ comment.author.substring(0, 1) }}
-                </q-avatar>
-              </q-item-section>
+          <transition-group name="fade" tag="div">
+            <div v-for="comment in comments" :key="comment.id">
+              <!-- COMMENT -->
+              <q-item
+                class="q-mt-xl q-mr-xl level-1"
+                style="margin-left: auto;"
+              >
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    {{ comment.author.substring(0, 1) }}
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section>
-                <q-item-label class="author">
-                  {{
-                    comment.isFlagged
-                      ? censorTxt(comment.author)
-                      : comment.author
-                  }}
-                </q-item-label>
-                <q-item-label
-                  class="message"
-                  :class="{ 'text-negative': comment.isFlagged }"
-                  v-html="$sanitize(comment.comment)"
-                />
-              </q-item-section>
+                <q-item-section>
+                  <q-item-label class="author">
+                    {{
+                      comment.isFlagged
+                        ? censorTxt(comment.author)
+                        : comment.author
+                    }}
+                  </q-item-label>
+                  <q-item-label
+                    class="message"
+                    :class="{ 'text-negative': comment.isFlagged }"
+                    v-html="$sanitize(comment.comment)"
+                  />
+                </q-item-section>
 
-              <q-item-section side top>
-                <q-item-label class="message">
-                  {{ toTimeElapsed(comment.created) }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <!-- REPLY (if applicable) -->
-            <q-item
-              class="q-mt-md q-mr-xl level-2"
-              style="margin-left: auto;"
-              v-if="comment.reply"
-            >
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  {{ comment.replyAuthor.substring(0, 1) }}
-                </q-avatar>
-              </q-item-section>
+                <q-item-section side top>
+                  <q-item-label class="message">
+                    {{ toTimeElapsed(comment.created) }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <!-- REPLY (if applicable) -->
+              <q-item
+                class="q-mt-md q-mr-xl level-2"
+                style="margin-left: auto;"
+                v-if="comment.reply"
+              >
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    {{ comment.replyAuthor.substring(0, 1) }}
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section>
-                <q-item-label class="author">
-                  {{ comment.replyAuthor }}
-                  <span class="text-weight-light text-caption">(Support)</span>
-                </q-item-label>
-                <q-item-label
-                  class="message"
-                  v-html="$sanitize(comment.reply)"
-                />
-              </q-item-section>
+                <q-item-section>
+                  <q-item-label class="author">
+                    {{ comment.replyAuthor }}
+                    <span class="text-weight-light text-caption"
+                      >(Support)</span
+                    >
+                  </q-item-label>
+                  <q-item-label
+                    class="message"
+                    v-html="$sanitize(comment.reply)"
+                  />
+                </q-item-section>
 
-              <q-item-section side top>
-                <q-item-label class="message" v-if="comment.replied">
-                  {{ toTimeElapsed(comment.replied) }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </div>
+                <q-item-section side top>
+                  <q-item-label class="message" v-if="comment.replied">
+                    {{ toTimeElapsed(comment.replied) }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </div>
+          </transition-group>
         </div>
         <q-form
           class="comment-form q-mt-lg"
@@ -256,6 +263,7 @@
           />
           <q-btn
             :loading="loading"
+            :disable="loading"
             unelevated
             type="submit"
             color="red-6 ls-sm"
@@ -537,7 +545,13 @@ export default {
   components: { Navigation },
   meta() {
     return {
-      title: this.title || "Product"
+      title: this.product.name || "Product",
+      meta: {
+        description: {
+          name: "description",
+          content: this.product.description || "Product Description"
+        }
+      }
     };
   },
   preFetch({ store, redirect, currentRoute }) {
@@ -557,6 +571,9 @@ export default {
   watch: {
     $route(to, from) {
       if (to.path !== from.path) {
+        // Reset
+        this.selected = "";
+        this.initSelection();
         // Refresh on route change
         this.getRelatedProducts(4);
       }
@@ -566,20 +583,7 @@ export default {
     ...mapGetters("buy", ["product", "related", "comments"])
   },
   created() {
-    this.title = this.product.name;
-    this.order.quantity = this.product.minOrderQty;
-
-    // Preselect options if any
-    if (!this.isEmpty(this.product.options)) {
-      this.product.options.forEach((item, idx) => {
-        // default to last item
-        this.order.options[idx] = item.choices.slice(-1).pop();
-      });
-    }
-    // Preselect image
-    if (!this.isEmpty(this.product.images)) {
-      this.selected = this.product.images[0].image;
-    }
+    this.initSelection();
   },
   mounted() {
     this.getRelatedProducts(4);
@@ -596,12 +600,7 @@ export default {
         options: [],
         otherVal: []
       },
-      comment: "",
-      testoptions: [
-        { label: "opt1", value: 1 },
-        { label: "opt2", value: 2 },
-        { label: "opt3", value: 3 }
-      ]
+      comment: ""
     };
   },
   methods: {
@@ -621,6 +620,23 @@ export default {
       return thumbnails.findIndex(item => {
         return this.selected === item.image;
       });
+    },
+
+    initSelection() {
+      this.title = this.product.name;
+      this.order.quantity = this.product.minOrderQty;
+
+      // Preselect options if any
+      if (!this.isEmpty(this.product.options)) {
+        this.product.options.forEach((item, idx) => {
+          // default to last item
+          this.order.options[idx] = item.choices.slice(-1).pop();
+        });
+      }
+      // Preselect image
+      if (!this.isEmpty(this.product.images)) {
+        this.selected = this.product.images[0].image;
+      }
     },
 
     toSelOptions(key, obj) {
@@ -680,11 +696,10 @@ export default {
         try {
           await this.postComment({
             comment: this.comment,
-            product: this.product.id,
-            author: "5e5de25cf4d1c30a985870f8" // TODO !!!
+            product: this.product.id
           });
           this.comment = ""; // Reset
-          this.showNotif("positive", "Your comment has been posted.");
+          this.showNotif("info", "Your comment has been posted.");
         } catch (err) {
           this.showNotif(
             "negative",

@@ -1,4 +1,4 @@
-export function related(state) {
+export function related(state, getters, rootState, rootGetters) {
   let ret = [];
 
   if (state.related && state.related.length > 0) {
@@ -6,25 +6,31 @@ export function related(state) {
       let img = item.images
         ? item.images.find(img => img.imageType == "gallery")
         : null;
-      ret.push({
+      let target = rootGetters["auth/isReseller"] ? "reseller" : "all";
+      let product = {
         name: item.name,
         seoname: item.seoname,
         options: item.options,
         baseprice: item.basePrice || "0",
-        // TODO!!!
         discount: item.discount
           ? item.discount.filter(
-              el => el.target == "all" || el.target == "reseller"
+              el => el.target == target || el.target == "all"
             )
           : [],
         image: img ? img.image : ""
+      };
+      // Use highest discount
+      product.discount.sort((a, b) => {
+        return b.percent - a.percent;
       });
+      ret.push(product);
     });
   }
   return ret;
 }
 
-export function product(state) {
+export function product(state, getters, rootState, rootGetters) {
+  let target = rootGetters["auth/isReseller"] ? "reseller" : "all";
   let ret = {
     id: state.product._id,
     name: state.product.name,
@@ -35,14 +41,17 @@ export function product(state) {
     options: state.product.options,
     minOrderQty: state.product.minOrderQuantity,
     baseprice: state.product.basePrice || "0",
-    // TODO!!!
     discount: state.product.discount
       ? state.product.discount.filter(
-          el => el.target == "all" || el.target == "reseller"
+          el => el.target == target || el.target == "all"
         )
       : [],
     images: state.product.images
   };
+  // Use largest discount
+  ret.discount.sort((a, b) => {
+    return b.percent - a.percent;
+  });
 
   return ret;
 }

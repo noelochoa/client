@@ -47,7 +47,8 @@
           />
           <q-btn
             :loading="loading"
-            class="full-width q-mt-md"
+            :disable="loading"
+            class="full-width q-my-md"
             unelevated
             type="submit"
             color="red-6 ls-sm"
@@ -55,6 +56,9 @@
             padding="sm lg"
             label="Login"
           />
+          <router-link to="/account/reset" class="hover-dark">
+            Forgot your Password? Click to reset.
+          </router-link>
         </q-form>
       </div>
       <div class="register text-grey-8">
@@ -126,7 +130,7 @@
             ]"
           />
           <q-checkbox
-            class="q-mt-sm force-left"
+            class="q-mt-sm force-left text-field"
             dense
             v-model="register.reseller"
             label="Apply as Reseller (For Approval)"
@@ -153,7 +157,7 @@
   width: 100%;
 }
 .grid {
-  height: 85vh;
+  min-height: 85vh;
   display: grid;
   padding: 50px;
   grid-template-columns: 1fr 50px 1fr;

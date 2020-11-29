@@ -21,7 +21,7 @@ export async function signin({ commit }, { email, password }) {
     return true;
   } catch (err) {
     return Promise.reject(
-      err.response.data.error || "Unexpected error has occurred."
+      err.response ? err.response.data.error : "Unexpected error has occurred."
     );
   }
 }
@@ -47,7 +47,7 @@ export async function register(
     return true;
   } catch (err) {
     return Promise.reject(
-      err.response.data.error || "Unexpected error has occurred."
+      err.response ? err.response.data.error : "Unexpected error has occurred."
     );
   }
 }
@@ -59,24 +59,145 @@ export async function signout({ commit }) {
     return true;
   } catch (err) {
     return Promise.reject(
-      err.response.data.error || "Unexpected error has occurred."
+      err.response ? err.response.data.error : "Unexpected error has occurred."
     );
   } finally {
     commit("RESET_AUTH");
   }
 }
 
-export async function fetchProfileDetails({}) {
+export async function fetchProfile({ commit }) {
   let resp;
   try {
     resp = await this.$axios.get("/api/profile");
     if (resp && resp.data) {
+      // Refresh
+      commit("SET_USER_AUTH", resp.data.customer);
       return resp.data.customer;
     }
     return {};
   } catch (err) {
     return Promise.reject(
-      err.response.data.error || "Unexpected error has occurred."
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function editProfile(
+  { state },
+  { firstname, lastname, address, phonenumber, notification }
+) {
+  let resp;
+  try {
+    resp = await this.$axios.patch("/api/profile", [
+      { property: "firstname", value: firstname },
+      { property: "lastname", value: lastname },
+      { property: "address", value: address },
+      { property: "phonenumber", value: phonenumber },
+      { property: "notification", value: notification }
+    ]);
+    if (resp && resp.data) {
+      return resp.data.message;
+    }
+    return Promise.reject("No response received.");
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function sendSMS({}) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/profile/smstoken");
+    return true;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function sendCode({}) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/profile/token");
+    return true;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function verify({}, { email, token }) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/profile/verify", {
+      email,
+      token: token.toUpperCase()
+    });
+    if (resp && resp.data) {
+      return resp.data.message;
+    }
+    return Promise.reject("No response received.");
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function verifySMS({}, { token }) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/profile/smsverify", {
+      token: token.toUpperCase()
+    });
+    if (resp && resp.data) {
+      return resp.data.message;
+    }
+    return Promise.reject("No response received.");
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function sendResetToken({}, { email }) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/profile/password/reset", {
+      email
+    });
+    if (resp && resp.data) {
+      return resp.data.message;
+    }
+    return Promise.reject("No response received.");
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function changePW({}, { token, newpass, email }) {
+  let resp;
+  try {
+    resp = await this.$axios.patch("/api/profile/password/reset", {
+      token: token.toUpperCase(),
+      newpass,
+      email
+    });
+    if (resp && resp.data) {
+      return resp.data.message;
+    }
+    return Promise.reject("No response received.");
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
     );
   }
 }
