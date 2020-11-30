@@ -701,10 +701,7 @@ export default {
           this.comment = ""; // Reset
           this.showNotif("info", "Your comment has been posted.");
         } catch (err) {
-          this.showNotif(
-            "negative",
-            "Error while posting comment. Please ensure your account has been verified."
-          );
+          this.showNotif("negative", err);
         } finally {
           this.loading = false;
         }
