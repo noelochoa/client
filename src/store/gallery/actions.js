@@ -91,3 +91,22 @@ export async function getNextProducts({ state }, { category, sort }) {
     return Promise.reject(err);
   }
 }
+
+export async function searchProducts({ commit }, { search }) {
+  let resp;
+  try {
+    resp = await this.$axios.get("/api/products", {
+      params: {
+        s: search,
+        l: 4
+      }
+    });
+    if (resp && resp.data) {
+      commit("SET_SEARCH_RESULTS", resp.data.products);
+      return resp.data.count;
+    }
+    return false;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}

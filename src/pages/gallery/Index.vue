@@ -115,17 +115,80 @@
                 />
               </template>
             </q-input>
-            <div class="search-results q-pa-lg text-grey-8" v-if="searchRes">
+            <div
+              class="search-results q-px-lg q-py-sm text-grey-8"
+              v-if="search && !fetching"
+            >
               <div class="section-label text-uppercase ls-sm">
                 Products
               </div>
-              <q-spinner
-                size="24px"
-                class="block"
-                color="primary"
-                v-if="fetching"
-              />
               <p>{{ searchRes }}</p>
+              <div class="sproduct-list q-mb-lg">
+                <div
+                  class="product-item"
+                  v-for="(product, pidx) in sProducts"
+                  :key="'prod-' + pidx"
+                  ref="prod"
+                >
+                  <router-link :to="'/buy/' + product.seoname">
+                    <q-img
+                      class="product-img cursor-pointer"
+                      :src="
+                        product.image
+                          ? resolveAssetsUrl(product.image)
+                          : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
+                      "
+                      native-context-menu
+                      :ratio="1"
+                    >
+                      <q-icon
+                        v-if="!isEmpty(product.discount)"
+                        class="absolute all-pointer-events"
+                        size="32px"
+                        name="card_giftcard"
+                        color="white"
+                        style="top: 8px; left: 8px"
+                      >
+                        <q-tooltip
+                          content-class="bg-primary text-accent text-subtitle2"
+                        >
+                          {{ product.discount[0].percent }}% OFF
+                        </q-tooltip>
+                      </q-icon>
+                    </q-img>
+                  </router-link>
+
+                  <div class="q-mt-md text-center cursor-pointer product-title">
+                    <router-link
+                      :to="'/buy/' + product.seoname"
+                      class="product-link text-h6 text-primary ls-sm"
+                    >
+                      {{ product.name }}
+                    </router-link>
+                  </div>
+                  <div class="ls-sm q-mt-sm text-center product-price">
+                    <span v-if="!isEmpty(product.options)">from </span>
+                    <span
+                      v-if="!isEmpty(product.discount)"
+                      class="text-strike"
+                      >{{ product.baseprice }}</span
+                    >
+                    <span
+                      v-if="!isEmpty(product.discount)"
+                      class="text-primary"
+                    >
+                      {{
+                        calcPrice(
+                          product.baseprice,
+                          product.discount[0].percent
+                        )
+                      }}
+                    </span>
+                    <span v-else>{{ product.baseprice }}</span>
+                    PHP
+                  </div>
+                </div>
+              </div>
             </div>
           </q-form>
         </div>
@@ -512,6 +575,7 @@
   }
 }
 
+// GALLERY
 .product-list {
   width: 100%;
   display: grid;
@@ -527,6 +591,30 @@
 
     .product-img:hover {
       transform: translate(2px, 2px);
+    }
+  }
+}
+
+// SEARCH RESULTS
+.sproduct-list {
+  width: 100%;
+  display: grid;
+  grid-gap: 40px;
+  justify-content: space-evenly;
+  grid-template-columns: repeat(4, minmax(110px, 380px));
+
+  .product-item {
+    .product-img {
+      width: 100%;
+      max-width: 100%;
+      transition: transform 0.25s ease-out;
+    }
+
+    .product-img:hover {
+      transform: translate(2px, 2px);
+    }
+    .product-title {
+      overflow: hidden;
     }
   }
 }
@@ -554,6 +642,43 @@
       margin-bottom: 16px;
       font-size: 15px;
       color: $grey-8;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .search-results {
+    padding-top: 0;
+  }
+
+  .sproduct-list {
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+
+    .product-item {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      grid-template-rows: 37px;
+      grid-template-areas:
+        "product-img product-title"
+        "product-img product-price";
+      column-gap: 40px;
+
+      .product-img {
+        grid-area: product-img;
+      }
+      .product-title {
+        text-align: left;
+        margin-top: 2px;
+        word-wrap: nowrap;
+        overflow: hidden;
+        grid-area: product-title;
+      }
+      .product-price {
+        text-align: left;
+        margin-top: 2px;
+        grid-area: product-price;
+      }
     }
   }
 }
@@ -629,7 +754,7 @@ export default {
       });
   },
   computed: {
-    ...mapGetters("gallery", ["productList", "categoryList"]),
+    ...mapGetters("gallery", ["productList", "categoryList", "searchResults"]),
     selectedCategory() {
       let ret = "All Products";
       if (this.$route.params.category) {
@@ -648,6 +773,9 @@ export default {
         ret = first ? first.image : ret;
       }
       return ret;
+    },
+    sProducts() {
+      return this.searchResults;
     }
   },
   created() {},
@@ -668,8 +796,7 @@ export default {
       showDlg: false,
       search: "",
       searchRes: "",
-      fetching: false,
-      sProducts: []
+      fetching: false
     };
   },
   methods: {
@@ -757,11 +884,13 @@ export default {
         this.searchRes = "";
         this.fetching = true;
         const res = await this.$store.dispatch("gallery/searchProducts", {
-          search
+          search: this.search
         });
-        this.searchRes = `${res.length} items found.`;
+        if (!res) {
+          this.searchRes = "No items found.";
+        }
       } catch (err) {
-        this.searchRes = "Error occurred while searching for products.";
+        this.searchRes = err + "Error occurred while searching for products.";
       } finally {
         this.fetching = false;
       }

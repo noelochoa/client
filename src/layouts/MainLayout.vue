@@ -152,7 +152,13 @@ export default {
     psa() {
       let psa = this.$store.state.home.psa;
       if (psa)
-        return { message: this.$sanitize(psa.message), link: psa.targetLink };
+        return {
+          message: this.$sanitize(psa.message),
+          link:
+            psa.targetLink.indexOf("https") !== -1
+              ? psa.targetLink
+              : "https://" + psa.targetLink
+        };
       return null;
     }
   },

@@ -115,11 +115,8 @@ h6,
   }
 }
 
-.navigation {
-  z-index: 99999;
-}
 .nav-search .q-dialog__inner {
-  top: calc(var(--psa-height, 0px) + 106px) !important;
+  top: calc(var(--psa-height, 0px)) !important;
 }
 
 .no-hover-bg:hover * {
