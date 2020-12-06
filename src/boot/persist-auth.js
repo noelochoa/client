@@ -4,9 +4,10 @@ import createPersistedState from "vuex-persistedstate";
 export default async ({ store, ssrContext }) => {
   const cookies = process.env.SERVER ? Cookies.parseSSR(ssrContext) : Cookies;
 
+  // Authentication
   createPersistedState({
     key: "_VUEX_AUTH_WEB",
-    paths: ["auth"],
+    paths: ["auth", "basket"],
     storage: {
       getItem: key => JSON.stringify(cookies.get(key)),
       setItem: (key, value) => {

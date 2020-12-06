@@ -22,6 +22,10 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/profile/Index.vue") },
+      {
+        path: "orders/:orderID",
+        component: () => import("pages/profile/Order.vue")
+      },
       { path: "verify", component: () => import("pages/profile/Verify.vue") },
       {
         path: "verifySMS",
@@ -29,6 +33,13 @@ const routes = [
       },
       { path: "edit", component: () => import("pages/profile/Edit.vue") }
     ]
+  },
+
+  // BASKET ROUTE
+  {
+    path: "/basket",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [{ path: "", component: () => import("pages/basket/Index.vue") }]
   },
 
   // LOGIN & REGISTER ROUTE

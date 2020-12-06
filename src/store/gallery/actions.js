@@ -4,8 +4,8 @@ const sortingFields = {
   "title-desc": "name",
   "date-desc": "created",
   "date-asc": "created",
-  "price-desc": "basePrice",
-  "price-asc": "basePrice"
+  "price-desc": "fprice",
+  "price-asc": "fprice"
 };
 
 export function pushProducts({ commit }, arr) {

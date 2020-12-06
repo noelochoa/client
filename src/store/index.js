@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import home from "./home";
 import gallery from "./gallery";
 import buy from "./buy";
+import basket from "./basket";
 import auth from "./auth";
 
 Vue.use(Vuex);
@@ -23,6 +24,7 @@ export default function(/* { ssrContext } */) {
       home,
       gallery,
       buy,
+      basket,
       auth
     },
 

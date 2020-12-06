@@ -19,6 +19,12 @@ export default inject(async function({ store, ssrContext }) {
       } else {
         delete config.headers["x-csrf-token"];
       }
+      if (store.state.basket && !!store.state.basket.basket_xsrf) {
+        config.headers["x-csrf-cart"] = store.state.basket.basket_xsrf;
+        // config.skipAuthRefresh = true;
+      } else {
+        delete config.headers["x-csrf-cart"];
+      }
       return config;
     },
     error => {
@@ -32,14 +38,21 @@ export default inject(async function({ store, ssrContext }) {
     },
     error => {
       if (
+        error.response.status === 401 &&
+        error.config.url.indexOf("/api/basket") !== -1
+      ) {
+        store.dispatch("basket/resetCart");
+      }
+
+      if (
         error.response.status === 403 ||
-        error.config.url == process.env.API + "/api/profile/refresh"
+        error.config.url.indexOf("/api/profile/refresh") !== -1
       ) {
         store.dispatch("auth/resetAuth");
         // redirect("/account");
       }
+
       return Promise.reject(error);
-      ``;
     }
   );
 

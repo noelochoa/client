@@ -83,6 +83,36 @@ export async function fetchProfile({ commit }) {
   }
 }
 
+export async function fetchOrders({}) {
+  let resp;
+  try {
+    resp = await this.$axios.get("/api/orders");
+    if (resp && resp.data) {
+      return resp.data;
+    }
+    return [];
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function fetchOrderDetails({}, { orderID }) {
+  let resp;
+  try {
+    resp = await this.$axios.get(`/api/orders/${orderID}`);
+    if (resp && resp.data) {
+      return resp.data;
+    }
+    return null;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
 export async function editProfile(
   { state },
   { firstname, lastname, address, phonenumber, notification }

@@ -68,9 +68,9 @@ p,
 a,
 li,
 .text-field,
-.text-field *,
+.text-field *:not(.q-icon),
 .text-comment,
-.text-comment * {
+.text-comment *:not(.q-icon) {
   font-family: "Source Sans Pro" !important;
 }
 
@@ -94,7 +94,7 @@ h6,
 }
 
 .q-field__messages,
-.q-field__messages * {
+.q-field__messages *:not(.q-icon) {
   font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
   font-size: 14px;
 }
@@ -145,6 +145,17 @@ h6,
 
 .text-underline {
   text-decoration: underline !important;
+}
+
+.detail-tooltip {
+  border: 1px solid $line;
+  width: 220px;
+  color: $grey-8;
+
+  * {
+    font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+    font-size: 16px;
+  }
 }
 
 /* custom scrollbar */

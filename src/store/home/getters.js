@@ -30,7 +30,7 @@ export function getNewItems(state, getters, rootState, rootGetters) {
         name: item.name,
         seoname: item.seoname,
         options: item.options,
-        baseprice: item.basePrice || "0",
+        baseprice: item.fprice || "0",
         discount: item.discount
           ? item.discount.filter(
               el => el.target == target || el.target == "all"

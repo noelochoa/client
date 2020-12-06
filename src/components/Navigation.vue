@@ -64,8 +64,10 @@
           </a>
         </li>
         <li class="ls-sm">
-          <router-link to="/" class="header-link hover-primary">
-            <span class="default">BASKET (0)</span>
+          <router-link to="/basket" class="header-link hover-primary">
+            <span class="default">BASKET </span>
+            (<span v-if="itemsCount">{{ itemsCount }}</span
+            >)
             <q-btn
               class="mobile no-hover-bg"
               flat
@@ -143,7 +145,7 @@
                       v-if="!isEmpty(product.discount)"
                       class="absolute all-pointer-events"
                       size="32px"
-                      name="card_giftcard"
+                      name="local_offer"
                       color="white"
                       style="top: 8px; left: 8px"
                     >
@@ -324,6 +326,9 @@ export default {
   computed: {
     sProducts() {
       return this.$store.getters["gallery/searchResults"];
+    },
+    itemsCount() {
+      return this.$store.getters["basket/itemsCount"] || "0";
     }
   },
   data() {

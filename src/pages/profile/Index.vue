@@ -11,7 +11,7 @@
         >
           Logout
         </div>
-        <div class="q-my-lg">
+        <div class="q-my-lg" v-if="user">
           <h4 class="text-primary">Welcome, {{ user.firstname }}!</h4>
           <h6 class="text-capitalize q-my-sm">
             {{ user.type }}
@@ -43,8 +43,84 @@
       <div class="profile-details q-mt-lg">
         <div class="section orders">
           <div class="section-label text-uppercase ls-sm">My Orders</div>
-          <ul class="text-details text-comment">
-            <li v-if="isEmpty(orders)">You have not placed any orders yet.</li>
+          <q-spinner
+            size="24px"
+            class="block"
+            color="primary"
+            v-if="fetchingOrders"
+          />
+          <ul class="order-details text-comment" v-else-if="!isEmpty(orders)">
+            <li
+              v-for="(order, oidx) in orders"
+              :key="'order-' + oidx"
+              class="q-my-md q-pb-md flex order-detail"
+            >
+              <div class="q-mr-md">
+                <div class="block text-grey-6">
+                  ORDER #
+                </div>
+                <div>
+                  <router-link
+                    class="block hover-primary cursor-pointer"
+                    :to="'/profile/orders/' + order.id"
+                  >
+                    {{ order.orderRef }}
+                  </router-link>
+                </div>
+              </div>
+              <div class="q-mr-md">
+                <div class="block text-grey-6">
+                  ORDER STATUS
+                </div>
+                <div class="block text-capitalize">
+                  {{ order.status.status }}
+                </div>
+              </div>
+              <div class="q-mr-md">
+                <div class="block text-grey-6">
+                  DATE PLACED
+                </div>
+                <div class="block">
+                  {{ toHumanDate(order.created) }}
+                </div>
+              </div>
+              <div class="q-mr-md cursor-pointer">
+                <div class="block text-grey-6">
+                  SHIPPING TYPE
+                </div>
+                <div class="block text-capitalize">
+                  {{ order.deliveryType }}
+                  <q-icon
+                    name="keyboard_arrow_down"
+                    v-if="order.deliveryType"
+                  />
+                </div>
+                <q-tooltip content-class="q-pa-md detail-tooltip bg-secondary">
+                  <div>
+                    <span class="block text-grey-6" v-if="order.target">
+                      TARGET
+                    </span>
+                    {{ toHumanDatetime(order.target) }}<br />
+                    <span
+                      class="block text-grey-6"
+                      v-if="order.shippingAddress"
+                    >
+                      ADDRESS
+                    </span>
+                    {{ order.shippingAddress }}
+                  </div>
+                </q-tooltip>
+              </div>
+              <div class="q-mr-md">
+                <div class="block text-grey-6">
+                  ORDER TOTAL
+                </div>
+                <div class="block text-capitalize">{{ order.total }} PHP</div>
+              </div>
+            </li>
+          </ul>
+          <ul class="text-details text-comment" v-else>
+            <li>You have not placed any orders yet.</li>
           </ul>
         </div>
         <div class="section details">
@@ -110,11 +186,12 @@
   width: 100%;
 }
 .profile {
-  min-height: 640px;
+  min-height: 720px;
   font-size: 16px;
-  margin: 60px auto;
   max-width: 1420px;
   padding: 0 80px;
+  margin: 60px auto;
+  margin-bottom: 80px;
 
   & > div {
     width: 100%;
@@ -131,7 +208,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 32px;
 
   .section {
     .section-label {
@@ -144,6 +221,15 @@
 
   .orders {
     flex: 1 1 680px;
+
+    .order-details {
+      line-height: 1.65em;
+
+      .order-detail {
+        justify-content: space-between;
+        border-bottom: 1px solid $line;
+      }
+    }
   }
 
   .details {
@@ -185,6 +271,7 @@ export default {
   created() {
     if (process.env.CLIENT) {
       this.getProfile();
+      this.getOrders();
     }
   },
   mounted() {},
@@ -192,21 +279,42 @@ export default {
     return {
       loading: false,
       fetching: true,
+      fetchingOrders: true,
       profile: {},
       orders: []
     };
   },
   methods: {
-    ...mapActions("auth", ["fetchProfile", "signout", "sendCode", "sendSMS"]),
+    ...mapActions("auth", [
+      "fetchProfile",
+      "fetchOrders",
+      "signout",
+      "sendCode",
+      "sendSMS"
+    ]),
     async getProfile() {
       try {
         const resp = await this.fetchProfile();
         if (resp) {
           this.profile = { ...resp };
         }
-        this.fetching = false;
       } catch (err) {
         this.$router.push("/account").catch(err => {});
+      } finally {
+        this.fetching = false;
+      }
+    },
+
+    async getOrders() {
+      try {
+        const resp = await this.fetchOrders();
+        if (resp) {
+          this.orders = resp.slice();
+        }
+      } catch (err) {
+        this.showNotif("negative", err);
+      } finally {
+        this.fetchingOrders = false;
       }
     },
 
@@ -238,7 +346,6 @@ export default {
         await this.signout();
       } catch (err) {
       } finally {
-        this.profile = {};
         this.$router.push("/account").catch(err => {});
       }
     }

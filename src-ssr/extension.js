@@ -138,6 +138,58 @@ module.exports.extendApp = function({ app, ssr }) {
       });
   });
 
+  app.use("/api/basket", cookieParser(), bodyParser.json(), function(req, res) {
+    console.log(req.originalUrl, req.path, req.query);
+
+    let headers = {};
+    if (req.cookies._JWT_WEB_CART) {
+      headers["x-cart"] = req.cookies._JWT_WEB_CART;
+    }
+    if (req.headers["x-csrf-cart"]) {
+      headers["x-csrf-cart"] = req.headers["x-csrf-cart"];
+    }
+    let options = {
+      method: req.method,
+      uri: API_URL + "/basket",
+      headers: {
+        ...headers
+      },
+      body: {
+        ...req.body
+      },
+      json: true
+    };
+    rp(options)
+      .then(function(body) {
+        if (!body) return res.status(200).send();
+        const { token, xsrf, count } = body;
+        if (token && xsrf && count) {
+          res.cookie("_JWT_WEB_CART", token, {
+            maxAge: 60 * 60 * 1000 * 24 * 7, //1 week
+            httpOnly: true,
+            sameSite: "Strict",
+            secure: prod
+          });
+          return res
+            .status(201)
+            .send({ message: "New basket/card created.", xsrf, count });
+        } else {
+          return res.status(200).send(body);
+        }
+      })
+      .catch(function(err) {
+        const { response } = err;
+        if (response) {
+          return res.status(response.statusCode).send(response.body);
+        } else {
+          console.log("err", err);
+          return res.status(500).send({
+            error: "Unexpected error has occurred."
+          });
+        }
+      });
+  });
+
   app.use("/api", cookieParser(), function(req, res) {
     console.log(req.originalUrl, req.path, req.query);
     // console.log(req.headers);

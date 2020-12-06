@@ -53,7 +53,7 @@ export default {
     // Replace all occurrences of search from txt
     replaceAll: function(txt, search, replace) {
       if (!txt) return txt;
-      return txt.replace(new RegExp(search, "g"), replace);
+      return txt.toString().replace(new RegExp(search, "g"), replace);
     },
 
     //change time to elapsed ( X time ago )
@@ -64,6 +64,19 @@ export default {
       return "";
     },
 
+    toHumanDate(date) {
+      if (date) {
+        return moment(date).format("MMM D, YYYY");
+      }
+      return "";
+    },
+
+    toHumanDatetime(date) {
+      if (date) {
+        return moment(date).format("MMM D, YYYY HH:mm");
+      }
+      return "";
+    },
     censorTxt(txt) {
       if (txt) {
         return txt.substring(0, 1).padEnd(txt.length, "*");
@@ -73,6 +86,7 @@ export default {
 
     // Uploaded Assets URL
     resolveAssetsUrl(file) {
+      if (!file) return file;
       file = this.replaceAll(file, /\\/, "\/");
       return process.env.STATIC_URL + "/" + file;
     },

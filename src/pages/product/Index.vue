@@ -19,6 +19,19 @@
             style="max-height:65vh;"
           >
             <q-icon
+              v-if="!isEmpty(product.discount)"
+              class="absolute all-pointer-events"
+              size="32px"
+              name="local_offer"
+              color="white"
+              style="top: 8px; left: 8px"
+            >
+              <q-tooltip content-class="bg-primary text-accent text-subtitle2">
+                {{ product.discount[0].percent }}% OFF
+              </q-tooltip>
+            </q-icon>
+
+            <q-icon
               v-if="!isEmpty(product.images) && product.images.length > 1"
               class="prev-action all-pointer-events"
               size="32px"
@@ -89,15 +102,19 @@
         </p>
         <h6 class="text-grey-8 ls-sm">
           <span v-if="!isEmpty(product.discount)" class="text-strike">{{
-            product.baseprice
+            baseprice
           }}</span>
           <span v-if="!isEmpty(product.discount)" class="text-primary">
-            {{ calcPrice(product.baseprice, product.discount[0].percent) }}
+            {{ price }}
           </span>
-          <span v-else>{{ product.baseprice }}</span>
+          <span v-else>{{ baseprice }}</span>
           PHP
         </h6>
-        <q-form class="order-form q-mt-md" ref="order-form">
+        <q-form
+          class="order-form q-mt-md"
+          ref="order-form"
+          @submit.prevent.stop="onAdd"
+        >
           <span class="text-grey-8">Qty (Min: {{ product.minOrderQty }}):</span>
           <q-input
             outlined
@@ -106,25 +123,20 @@
             class="q-mb-md"
             input-style="text-align:center;"
             style="max-width: 140px;"
+            @input="onChgQty"
           >
             <template v-slot:prepend>
               <q-icon
                 name="remove"
                 class="cursor-pointer"
-                @click="
-                  order.quantity - 1 >= product.minOrderQty
-                    ? (order.quantity -= 1)
-                    : false
-                "
+                @click="onChgQty(order.quantity - 1)"
               />
             </template>
             <template v-slot:append>
               <q-icon
                 name="add"
                 class="cursor-pointer"
-                @click="
-                  order.quantity + 1 <= 100 ? (order.quantity += 1) : false
-                "
+                @click="onChgQty(Number.parseInt(order.quantity) + 1)"
               />
             </template>
           </q-input>
@@ -134,8 +146,6 @@
               popup-content-class="bg-secondary"
               outlined
               dense
-              emit-value
-              map-options
               :options="toSelOptions(option.attribute, option.choices)"
               v-model="order.options[idx]"
               @input="onSelOption(idx)"
@@ -159,6 +169,7 @@
             size="16px"
             padding="sm lg"
             label="Add to Basket"
+            :loading="loadingAdd"
           />
         </q-form>
         <div class="description q-mt-lg text-grey-8 text-subtitle1">
@@ -299,7 +310,7 @@
                   v-if="!isEmpty(product.discount)"
                   class="absolute all-pointer-events"
                   size="32px"
-                  name="card_giftcard"
+                  name="local_offer"
                   color="white"
                   style="top: 8px; left: 8px"
                 >
@@ -570,17 +581,35 @@ export default {
   },
   watch: {
     $route(to, from) {
+      // Refresh on route change
       if (to.path !== from.path) {
         // Reset
         this.selected = "";
         this.initSelection();
-        // Refresh on route change
         this.getRelatedProducts(4);
       }
     }
   },
   computed: {
-    ...mapGetters("buy", ["product", "related", "comments"])
+    ...mapGetters("buy", ["product", "related", "comments"]),
+
+    price() {
+      const reducer = (total, item) => total + item.value.price;
+      let price =
+        this.order.quantity *
+        this.order.options.reduce(reducer, this.product.baseprice);
+      if (!this.isEmpty(this.product.discount))
+        return this.calcPrice(price, this.product.discount[0].percent);
+      else return price;
+    },
+
+    baseprice() {
+      const reducer = (total, item) => total + item.value.price;
+      return (
+        this.order.quantity *
+        this.order.options.reduce(reducer, this.product.baseprice)
+      );
+    }
   },
   created() {
     this.initSelection();
@@ -591,6 +620,7 @@ export default {
   data() {
     return {
       loading: false,
+      loadingAdd: false,
       title: "",
       selected: "",
       filter: false,
@@ -605,6 +635,7 @@ export default {
   },
   methods: {
     ...mapActions("buy", ["findRelatedProducts", "postComment"]),
+    ...mapActions("basket", ["addToCart"]),
 
     _isContentEmpty(val) {
       if (!val) return true;
@@ -625,12 +656,22 @@ export default {
     initSelection() {
       this.title = this.product.name;
       this.order.quantity = this.product.minOrderQty;
+      this.order.options = [];
 
       // Preselect options if any
       if (!this.isEmpty(this.product.options)) {
         this.product.options.forEach((item, idx) => {
           // default to last item
-          this.order.options[idx] = item.choices.slice(-1).pop();
+          const last = item.choices.slice(-1).pop();
+          this.order.options[idx] = {
+            label:
+              last.value +
+              (last.price >= 0
+                ? ` (+${last.price} PHP)`
+                : ` (${last.price} PHP)`),
+            value: last,
+            key: item.attribute
+          };
         });
       }
       // Preselect image
@@ -646,8 +687,8 @@ export default {
             label:
               item.value +
               (item.price >= 0
-                ? `(+${item.price}  PHP)`
-                : `(${item.price} PHP)`),
+                ? ` (+${item.price} PHP)`
+                : ` (${item.price} PHP)`),
             value: item,
             key: key
           };
@@ -656,13 +697,20 @@ export default {
       return obj;
     },
 
-    onSelOption(val) {
-      console.log(this.order.options[val]);
+    onChgQty(val) {
+      if (this.product.minOrderQty <= val && val <= 100) {
+        this.order.quantity = val;
+        return true;
+      } else {
+        this.order.quantity = this.product.minOrderQty;
+      }
     },
 
+    onSelOption(val) {},
+
     isOtherSelected(obj) {
-      if (obj) {
-        return obj.value == "Other";
+      if (obj && obj.value) {
+        return obj.value.value == "Other";
       }
 
       return false;
@@ -708,6 +756,33 @@ export default {
       } else {
         this.$refs.qTxtEditor.focus();
         this.loading = false;
+      }
+    },
+
+    onAdd: async function(evt) {
+      this.loadingAdd = true;
+      try {
+        let product = {
+          product: this.product.id,
+          quantity: this.order.quantity,
+          options: this.order.options.map((item, key) => {
+            return {
+              _option: item.key,
+              _selected: item.value.value,
+              otherValue:
+                item.value.value == "Other" ? this.order.otherVal[key] : null
+            };
+          })
+        };
+
+        await this.addToCart({
+          product
+        });
+        this.showNotif("info", "Your cart has been updated.");
+      } catch (err) {
+        this.showNotif("negative", err);
+      } finally {
+        this.loadingAdd = false;
       }
     }
   }

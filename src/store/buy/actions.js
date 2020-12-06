@@ -40,7 +40,7 @@ export async function postComment(
   let resp;
   try {
     if (!rootGetters["auth/isVerified"]) {
-      throw "Unauthenticated or account is not verified.";
+      throw "You may only post when logged in.";
     }
     console.log(rootGetters["auth/getCustomerID"]);
     resp = await this.$axios.post("/api/comments", {
