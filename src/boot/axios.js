@@ -21,7 +21,7 @@ export default inject(async function({ store, ssrContext }) {
       }
       if (store.state.basket && !!store.state.basket.basket_xsrf) {
         config.headers["x-csrf-cart"] = store.state.basket.basket_xsrf;
-        // config.skipAuthRefresh = true;
+        config.skipAuthRefresh = true;
       } else {
         delete config.headers["x-csrf-cart"];
       }

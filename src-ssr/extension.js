@@ -162,17 +162,16 @@ module.exports.extendApp = function({ app, ssr }) {
     rp(options)
       .then(function(body) {
         if (!body) return res.status(200).send();
-        const { token, xsrf, count } = body;
-        if (token && xsrf && count) {
+        const { token } = body;
+        if (token) {
           res.cookie("_JWT_WEB_CART", token, {
             maxAge: 60 * 60 * 1000 * 24 * 7, //1 week
             httpOnly: true,
             sameSite: "Strict",
             secure: prod
           });
-          return res
-            .status(201)
-            .send({ message: "New basket/card created.", xsrf, count });
+          delete body.token;
+          return res.status(200).send(body);
         } else {
           return res.status(200).send(body);
         }
@@ -180,6 +179,9 @@ module.exports.extendApp = function({ app, ssr }) {
       .catch(function(err) {
         const { response } = err;
         if (response) {
+          if (response.statusCode == 404) {
+            res.clearCookie("_JWT_WEB_CART");
+          }
           return res.status(response.statusCode).send(response.body);
         } else {
           console.log("err", err);

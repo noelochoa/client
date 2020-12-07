@@ -92,10 +92,10 @@ export default {
     },
 
     // Notification
-    showNotif: function(type, msg) {
+    showNotif: function(type, msg, to = 3000) {
       this.$q.notify({
         type: type,
-        timeout: "3000",
+        timeout: to,
         position: "top",
         message: msg
       });

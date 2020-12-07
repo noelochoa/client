@@ -263,7 +263,11 @@ export default {
       this.loading = true;
       try {
         await this.$store.dispatch("auth/signin", { ...this.login });
-        this.$router.push("/").catch(err => {});
+        if (this.$route.query.ref) {
+          this.$router.push(this.$route.query.ref).catch(err => {});
+        } else {
+          this.$router.push("/").catch(err => {});
+        }
       } catch (err) {
         this.loginErr = err;
       } finally {
@@ -276,6 +280,11 @@ export default {
       this.rloading = true;
       try {
         await this.$store.dispatch("auth/register", { ...this.register });
+        this.showNotif(
+          "info",
+          "Please verify your account before completing your purchase.",
+          5000
+        );
         this.$router.push("/").catch(err => {});
       } catch (err) {
         this.registerErr = err;

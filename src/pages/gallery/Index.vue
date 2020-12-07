@@ -68,8 +68,7 @@
           <li class="ls-sm">
             <router-link to="/basket" class="header-link hover-primary">
               <span class="default">BASKET </span>
-              (<span v-if="itemsCount">{{ itemsCount }}</span
-              >)
+              <span class="default" v-if="itemsCount">({{ itemsCount }})</span>
               <q-btn
                 class="mobile no-hover-bg"
                 flat

@@ -2,127 +2,17 @@
   <q-page class="mainpage">
     <!-- NAV -->
     <Navigation v-bind="{ opaque: true }"> </Navigation>
-    <!-- Basket Items -->
-    <div class="basket text-grey-8">
+    <!-- CHECKOUT FORM -->
+    <div class="checkout text-grey-8">
       <div class="basket-heading">
-        <h4 class="text-primary text-center ls-sm">Your Basket</h4>
+        <h4 class="text-primary text-center ls-sm">Checkout</h4>
         <p class="q-mt-lg text-center">{{ fetchErr }}</p>
       </div>
       <div v-if="fetching" class="q-mt-lg text-center">
         <q-spinner size="50px" color="primary" />
       </div>
-      <div v-else-if="isEmpty(basket) && !fetching" class="q-mt-lg text-center">
-        <q-btn
-          class="q-mt-lg"
-          unelevated
-          color="red-6 ls-sm"
-          size="16px"
-          padding="sm lg"
-          label="Go to Shop"
-          to="/products"
-        />
-      </div>
-      <div class="basket-details q-mt-lg" v-else>
-        <div class="table-header">
-          <span class="ls-sm header-item">PRODUCT</span>
-          <span class="ls-sm header-item"></span>
-          <span class="ls-sm header-item text-center q-px-sm">QTY.</span>
-          <span class="ls-sm header-item text-right">PRICE</span>
-        </div>
-        <div
-          class="table-item text-grey-7"
-          v-for="(item, pidx) in products"
-          :key="'item-' + pidx"
-        >
-          <div class="product-info product-img">
-            <q-img
-              :src="
-                !isEmpty(item.image)
-                  ? resolveAssetsUrl(item.image)
-                  : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
-              "
-              native-context-menu
-              :ratio="1"
-            />
-          </div>
-          <div class="product-info product-detail ls-sm">
-            <router-link
-              v-if="item.isActive"
-              class="text-h6 text-primary product-link ls-sm overflow-ellipsis"
-              :to="'/buy/' + item.seoname"
-            >
-              {{ item.name }}
-            </router-link>
-            <div class="text-h6 ls-sm overflow-ellipsis" v-else>
-              {{ item.name }}
-            </div>
-            <div>{{ item.category }}</div>
-            <div
-              class="options"
-              v-for="(opt, idx) in item.options"
-              :key="'key-' + idx"
-            >
-              {{ opt._option + ": " + opt._selected }}
-              <span v-if="opt.otherValue != null">({{ opt.otherValue }}) </span
-              ><br />
-            </div>
-          </div>
-          <!-- <div class="product-info ls-sm text-center">{{ item.quantity }}</div> -->
-          <div class="product-info text-center">
-            <q-input
-              outlined
-              dense
-              :value="item.quantity"
-              input-style="text-align:center;"
-              style="max-width: 140px; margin: 0 auto;"
-              @input="onChgQty($event, pidx)"
-              :debounce="1000"
-            >
-              <template v-slot:prepend>
-                <q-icon
-                  name="remove"
-                  class="cursor-pointer"
-                  @click="onChgQty(item.quantity - 1, pidx)"
-                />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  name="add"
-                  class="cursor-pointer"
-                  @click="onChgQty(Number.parseInt(item.quantity) + 1, pidx)"
-                />
-              </template>
-            </q-input>
-            <q-btn
-              flat
-              label="remove"
-              class="ls-sm no-hover-bg hover-primary q-pd-md"
-              :ripple="false"
-              @click="onRemove(pidx)"
-            />
-          </div>
-          <div class="product-info product-price text-right ls-sm">
-            {{ item.price }} PHP
-          </div>
-        </div>
-      </div>
-      <div class="table-footer" v-if="!isEmpty(basket) && !fetching">
-        <div class="footer-item">
-          <span class="ls-sm text-primary">TOTAL: </span>
-          <span class="ls-sm text-primary">{{ total }} PHP</span>
-          <p>
-            Displayed total have all discounts applied (if any).
-          </p>
-          <q-btn
-            unelevated
-            type="submit"
-            color="red-6 ls-sm"
-            size="16px"
-            padding="sm lg"
-            label="Checkout"
-            to="/checkout"
-          />
-        </div>
+      <div v-else>
+        {{ basket }}
       </div>
     </div>
   </q-page>
@@ -132,7 +22,7 @@
 .mainpage > div {
   width: 100%;
 }
-.basket {
+.checkout {
   min-height: 65vh;
   font-size: 16px;
   max-width: 1200px;
@@ -143,60 +33,6 @@
     width: 100%;
   }
 }
-.basket-details {
-  display: table;
-  table-layout: auto;
-  border-spacing: 0 30px;
-  width: 100%;
-
-  .table-header {
-    display: table-header-group;
-
-    .header-item {
-      display: table-cell;
-      padding-bottom: 10px;
-      border-bottom: 1px solid $line;
-    }
-  }
-  .table-item {
-    display: table-row;
-    margin: 30px 0;
-    width: 100%;
-
-    .product-info {
-      display: table-cell;
-      vertical-align: middle;
-    }
-    .product-img {
-      width: 100px;
-    }
-    .product-detail {
-      width: 440px;
-      max-width: 440px;
-      padding-left: 30px;
-    }
-    .product-price {
-      width: 120px;
-    }
-    .options {
-      font-size: 14px;
-    }
-  }
-}
-.table-footer {
-  display: table;
-  table-layout: auto;
-  border-spacing: 0 30px;
-  width: 100%;
-  border-top: 1px solid $line;
-
-  .footer-item {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: right;
-    width: 100%;
-  }
-}
 .overflow-ellipsis {
   display: block;
   max-width: inherit;
@@ -204,9 +40,6 @@
   text-overflow: ellipsis;
 }
 @media (max-width: 600px) {
-  .basket {
-    padding: 0 20px;
-  }
 }
 </style>
 
@@ -215,16 +48,23 @@ import HelperMixin from "../../mixins/helpers";
 import Navigation from "../../components/Navigation";
 
 export default {
-  name: "Basket",
+  name: "Checkout",
   mixins: [HelperMixin],
   components: { Navigation },
+  preFetch({ store, redirect, currentRoute }) {
+    if (!store.getters["basket/itemsCount"]) {
+      return redirect("/basket");
+    }
+    if (!store.getters["auth/isAuthenticated"]) {
+      return redirect("/account?ref=" + currentRoute.path);
+    }
+  },
 
   meta() {
     return {
-      title: "Your Basket"
+      title: "Checkout"
     };
   },
-
   computed: {
     // Basket items
     products() {

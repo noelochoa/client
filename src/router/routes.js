@@ -42,6 +42,14 @@ const routes = [
     children: [{ path: "", component: () => import("pages/basket/Index.vue") }]
   },
 
+  {
+    path: "/checkout",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/basket/Checkout.vue") }
+    ]
+  },
+
   // LOGIN & REGISTER ROUTE
   {
     path: "/account",

@@ -32,10 +32,8 @@ export async function updateCart({ commit }, { product }) {
     });
     if (resp) {
       if (resp.data.xsrf) commit("SET_XSRF_CART", resp.data.xsrf);
-      if (resp.data.count) commit("SET_CART_COUNT", resp.data.count);
-      if (resp.data.count == 0) {
-        commit("RESET_CART");
-      }
+      if (resp.data.count || resp.data.count == 0)
+        commit("SET_CART_COUNT", resp.data.count);
     }
     return true;
   } catch (err) {
@@ -53,9 +51,12 @@ export async function fetchCartDetails({ commit }) {
   try {
     resp = await this.$axios.get("/api/basket");
     if (resp && resp.data.basket) {
+      if (resp.data.xsrf) commit("SET_XSRF_CART", resp.data.xsrf);
+      if (resp.data.count || resp.data.count == 0)
+        commit("SET_CART_COUNT", resp.data.count);
       return resp.data.basket;
     } else {
-      commit("RESET_CART");
+      commit("SET_CART_COUNT", 0);
     }
     return null;
   } catch (err) {
