@@ -168,19 +168,19 @@ h6,
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: $red-3;
+  background-color: $grey-5;
   border-radius: 20px;
   border: 6px solid transparent;
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: $red-5;
+  background-color: $grey-7;
 }
 
 /* Moz Scrollbar */
 :root {
-  scrollbar-color: $red-3 transparent !important;
+  scrollbar-color: $grey-5 transparent !important;
   scrollbar-width: thin !important;
 }
 

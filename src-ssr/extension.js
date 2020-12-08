@@ -130,7 +130,6 @@ module.exports.extendApp = function({ app, ssr }) {
         if (response) {
           return res.status(response.statusCode).send(response.body);
         } else {
-          console.log("err", err);
           return res.status(500).send({
             error: "Unexpected error has occurred."
           });
@@ -184,7 +183,6 @@ module.exports.extendApp = function({ app, ssr }) {
           }
           return res.status(response.statusCode).send(response.body);
         } else {
-          console.log("err", err);
           return res.status(500).send({
             error: "Unexpected error has occurred."
           });

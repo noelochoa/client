@@ -144,7 +144,9 @@
 export default {
   name: "AccountLayout",
   preFetch({ store, redirect }) {
-    return store.dispatch("home/getPSA");
+    return store.dispatch("home/getPSA").catch(err => {
+      redirect("/error500");
+    });
   },
   computed: {
     psa() {

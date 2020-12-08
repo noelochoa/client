@@ -361,7 +361,6 @@ export default {
         const resp = await this.$store.dispatch("basket/fetchCartDetails");
         if (resp) {
           this.basket = JSON.parse(JSON.stringify(resp));
-          this.fetching = false;
         } else {
           this.fetchErr = "No items on your shopping basket.";
         }
