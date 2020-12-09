@@ -6,17 +6,19 @@
     <div class="checkout text-grey-8 flex">
       <div class="checkout-heading">
         <h4 class="text-primary text-center ls-sm">Checkout</h4>
-        <p class="q-mt-lg text-center">{{ checkOutErr }}</p>
-        <p class="text-subtitle1 q-mt-sm">Fill out your information below:</p>
-        <q-form
-          class="checkout-form text-field"
-          @submit.prevent.stop="onSubmit"
+        <p
+          v-if="checkOutErr"
+          class="error-msg text-negative text-center bg-red-3 q-py-sm"
         >
+          {{ checkOutErr }}
+        </p>
+        <p class="text-subtitle1 q-mt-sm">Fill out your information below:</p>
+        <q-form class="checkout-form" @submit.prevent.stop="onSubmit">
           <div v-if="fetching || fetchingProfile" class="q-mt-lg">
             <q-spinner size="50px" color="primary" />
           </div>
           <div v-else>
-            <ul class="form-items">
+            <ul class="form-items text-field">
               <li>
                 <span class="field-heading text-weight-bold block"
                   >Contact Information
@@ -26,11 +28,25 @@
                 </span>
               </li>
               <li class="q-mt-md">
-                <span class="field-heading text-weight-bold q-mt-sm block"
-                  >Shipping</span
+                <span class="field-heading text-weight-bold q-mt-sm q-mr-xs">
+                  Shipping
+                </span>
+                <q-icon
+                  v-if="order.deliveryType == 'pickup'"
+                  size="17px"
+                  name="help"
+                  class="cursor-pointer q-mb-xs"
                 >
+                  <q-tooltip
+                    anchor="top middle"
+                    self="bottom middle"
+                    content-class="bg-primary text-white text-caption"
+                  >
+                    Pickup on our main store. (Sawali Restaurant)
+                  </q-tooltip>
+                </q-icon>
               </li>
-              <li>
+              <li class="q-mt-sm">
                 <q-select
                   class="field-value"
                   label="Delivery Type"
@@ -38,6 +54,7 @@
                   :options="deliveryTypes"
                   outlined
                   no-error-icon
+                  hide-bottom-space
                   bg-color="white"
                   emit-value
                   map-options
@@ -45,13 +62,14 @@
                   :rules="[_isValidType]"
                 />
               </li>
-              <li>
-                <span class="field-name q-mt-sm block">Address</span>
+              <li class="q-mt-sm" v-if="order.deliveryType == 'delivery'">
+                <span class="field-name block">Address</span>
                 <q-input
                   type="textarea"
                   :rows="4"
                   textarea
                   no-error-icon
+                  hide-bottom-space
                   outlined
                   placeholder="Type address here..."
                   class="field-value"
@@ -68,13 +86,13 @@
                   ]"
                 />
               </li>
-              <li>
+              <li class="q-mt-sm">
                 <span class="field-label q-mr-xs">Target Date</span>
                 <q-icon size="17px" name="help" class="cursor-pointer q-mb-xs">
                   <q-tooltip
                     anchor="top middle"
                     self="bottom middle"
-                    content-class="bg-primary text-accent text-caption"
+                    content-class="bg-primary text-white text-caption"
                   >
                     Select your desired date for pickup or delivery.
                   </q-tooltip>
@@ -82,11 +100,14 @@
                 <q-input
                   outlined
                   no-error-icon
+                  hide-bottom-space
                   bg-color="white"
                   class="field-value"
+                  placeholder="YYYY-MM-DD HH:mm"
                   v-model="order.target"
                   :rules="[
-                    val => val !== null && val.trim() !== '',
+                    val =>
+                      (val !== null && val.trim() !== '') || 'Date required.',
                     _isValidDatetime
                   ]"
                 >
@@ -126,10 +147,8 @@
                   </template>
                 </q-input>
               </li>
-              <li>
-                <span class="field-name q-mt-sm block"
-                  >Special instructions</span
-                >
+              <li class="q-mt-sm">
+                <span class="field-name block">Special Instructions</span>
                 <q-input
                   type="textarea"
                   :rows="4"
@@ -175,7 +194,11 @@
               "
               native-context-menu
               :ratio="1"
-            />
+            >
+              <q-badge class="small-badge" color="primary">{{
+                item.quantity
+              }}</q-badge>
+            </q-img>
           </div>
           <div class="product-info ls-sm product-title">
             <div class="ls-sm text-weight-bold overflow-ellipsis">
@@ -194,7 +217,7 @@
           <div
             class="product-info text-weight-bold product-price text-right ls-sm"
           >
-            {{ item.price }} PHP
+            {{ item.price }} PHP<br />
           </div>
         </div>
         <div
@@ -211,7 +234,7 @@
     </div>
   </q-page>
 </template>
-
+<style></style>
 <style lang="scss" scoped>
 .mainpage > div {
   width: 100%;
@@ -414,7 +437,6 @@ export default {
         deliveryType: null,
         shippingAddress: "",
         target: null,
-        products: [],
         memo: ""
       }
     };
@@ -450,54 +472,13 @@ export default {
 
     _isValidDatetime(val) {
       const dtpattern = /^\d{4}-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (0?[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9])$/g;
-      return dtpattern.test(val) || "Invalid date & time format";
-    },
+      const fmt = dtpattern.test(val);
+      if (!fmt) "Invalid date & time format";
 
-    async onChgQty(val, key) {
-      try {
-        const item = this.basket.products[key];
-        const prev = this.basket.products[key].quantity;
-
-        const min = item.product.minOrderQuantity;
-        if (min <= val && val <= 100) {
-          this.basket.products[key].quantity = val;
-        } else {
-          this.basket.products[key].quantity = min;
-        }
-
-        if (prev == this.basket.products[key].quantity) return;
-
-        await this.$store.dispatch("basket/updateCart", {
-          product: {
-            product: item.product._id,
-            quantity: item.quantity,
-            options: item.options
-          }
-        });
-      } catch (err) {
-        console.log(err);
-        this.checkOutErr = "Could not update basket items. " + err;
-      }
-    },
-
-    async onRemove(key) {
-      try {
-        const item = this.basket.products[key];
-        await this.$store.dispatch("basket/updateCart", {
-          product: {
-            product: item.product._id,
-            quantity: 0,
-            options: item.options
-          }
-        });
-        this.$delete(this.basket.products, key);
-        if (this.basket.products.length == 0) {
-          this.checkOutErr = "No items on your shopping basket.";
-          this.basket = {};
-        }
-      } catch (err) {
-        this.checkOutErr = "Could not update basket items. " + err;
-      }
+      const dt = Date.parse(val);
+      return (
+        dt - new Date() > 24 * 60 * 60 * 1000 || "Please choose a future date."
+      );
     },
 
     async getCartDetails() {
@@ -530,7 +511,22 @@ export default {
     },
 
     async onSubmit() {
-      return false;
+      try {
+        this.loading = true;
+        await this.$store.dispatch("basket/placeOrder", {
+          order: this.order,
+          price: this.total
+        });
+        this.showNotif(
+          "info",
+          "Order has been placed and subject for approval."
+        );
+        this.$router.push("/account").catch(err => {});
+      } catch (err) {
+        this.checkOutErr = err;
+      } finally {
+        this.loading = false;
+      }
     }
   }
 };

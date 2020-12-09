@@ -199,6 +199,9 @@ module.exports.extendApp = function({ app, ssr }) {
     if (req.cookies._JWT_WEB) {
       req.headers.authorization = "Bearer " + req.cookies._JWT_WEB;
     }
+    if (req.cookies._JWT_WEB_CART) {
+      req.headers["x-cart"] = req.cookies._JWT_WEB_CART;
+    }
     const proxy = request({
       url: url,
       qs: req.query

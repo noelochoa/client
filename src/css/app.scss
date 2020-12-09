@@ -63,7 +63,6 @@ form[disabled="disabled"] * {
 li {
   list-style: none;
 }
-
 p,
 a,
 li,
@@ -156,6 +155,14 @@ h6,
     font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
     font-size: 16px;
   }
+}
+
+.small-badge {
+  padding: 6px !important;
+  border-radius: 0;
+  position: relative;
+  top: 0;
+  right: 0;
 }
 
 /* custom scrollbar */

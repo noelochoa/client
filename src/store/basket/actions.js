@@ -68,3 +68,21 @@ export async function fetchCartDetails({ commit }) {
     );
   }
 }
+
+export async function placeOrder({ commit }, { order, price }) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/orders", {
+      ...order,
+      price
+    });
+    if (resp) {
+      commit("SET_CART_COUNT", 0); // Clear
+    }
+    return true;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
