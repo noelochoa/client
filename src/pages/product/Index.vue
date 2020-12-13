@@ -175,6 +175,9 @@
         <div class="description q-mt-lg text-grey-8 text-subtitle1">
           <h6>About this product:</h6>
           {{ product.description }}
+          <p v-if="product.sold">
+            <q-icon name="redeem" class="q-mr-sm" />{{ product.sold }} sold
+          </p>
         </div>
       </div>
     </div>

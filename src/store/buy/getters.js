@@ -40,6 +40,7 @@ export function product(state, getters, rootState, rootGetters) {
     details: state.product.details,
     options: state.product.options,
     minOrderQty: state.product.minOrderQuantity,
+    sold: state.product.sold,
     baseprice: state.product.basePrice || "0",
     discount: state.product.discount
       ? state.product.discount.filter(

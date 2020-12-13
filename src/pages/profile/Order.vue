@@ -27,7 +27,7 @@
           <span class="block text-capitalize">
             {{ toHumanDatetime(order.target) }}
           </span>
-          <span class=" text-capitalize" v-if="order.shippingAddress">
+          <span class="text-capitalize" v-if="order.shippingAddress">
             {{ order.shippingAddress }}<br />
           </span>
         </p>
@@ -85,11 +85,27 @@
       </div>
       <div class="table-footer">
         <div class="footer-item">
+          <p class="text-left" v-if="order.memo" style="max-width: 400px;">
+            <span class="text-field block">Special Instructions:</span>
+            {{ order.memo }}
+          </p>
+        </div>
+        <div class="footer-item">
           <span class="ls-sm text-primary">TOTAL: </span>
           <span class="ls-sm text-primary">{{ order.total }} PHP</span>
           <p>
             Displayed total have all discounts applied (if any) at order date.
           </p>
+          <q-btn
+            unelevated
+            color="red-6 ls-sm"
+            size="16px"
+            padding="sm lg"
+            label="Cancel Order"
+            :disable="order.statusName !== 'placed' || loading"
+            :loading="loading"
+            @click="onCancel"
+          />
         </div>
       </div>
     </div>
@@ -159,7 +175,6 @@
     display: table-cell;
     vertical-align: middle;
     text-align: right;
-    width: 100%;
   }
 }
 .overflow-ellipsis {
@@ -212,6 +227,20 @@ export default {
         if (retImg) return retImg.image;
       }
       return false;
+    },
+
+    async onCancel() {
+      try {
+        this.loading = true;
+        await this.$store.dispatch("auth/cancelOrder", {
+          orderID: this.$route.params.orderID
+        });
+        this.$router.push("/profile").catch(err => {});
+      } catch (err) {
+        this.showNotif("negative", err);
+      } finally {
+        this.loading = false;
+      }
     },
 
     async getOrderDetails() {

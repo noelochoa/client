@@ -4,8 +4,7 @@ export async function getProductDetails({ commit }, { seoname }) {
     resp = await this.$axios.get(`/api/products/buy/${seoname}`);
     if (resp && resp.data) {
       commit("SET_PRODUCT", resp.data);
-      if (resp.data.comments && resp.data.comments.length > 0)
-        commit("SET_COMMENTS", resp.data.comments);
+      commit("SET_COMMENTS", resp.data.comments);
     }
     return true;
   } catch (err) {
@@ -40,9 +39,8 @@ export async function postComment(
   let resp;
   try {
     if (!rootGetters["auth/isVerified"]) {
-      throw "You may only post when logged in.";
+      throw "You may only post when logged in and verified.";
     }
-    console.log(rootGetters["auth/getCustomerID"]);
     resp = await this.$axios.post("/api/comments", {
       comment,
       author: rootGetters["auth/getCustomerID"],

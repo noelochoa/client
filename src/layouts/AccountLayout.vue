@@ -31,7 +31,9 @@
               <li class="block">
                 <router-link to="/account">ACCOUNT</router-link>
               </li>
-              <li class="block"><router-link to="/">CART</router-link></li>
+              <li class="block">
+                <router-link to="/basket">CART</router-link>
+              </li>
             </ul>
           </div>
           <div class="sns">

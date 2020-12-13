@@ -113,6 +113,18 @@ export async function fetchOrderDetails({}, { orderID }) {
   }
 }
 
+export async function cancelOrder({}, { orderID }) {
+  let resp;
+  try {
+    resp = await this.$axios.patch(`/api/orders/${orderID}`);
+    return true;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
 export async function editProfile(
   { state },
   { firstname, lastname, address, phonenumber, notification }

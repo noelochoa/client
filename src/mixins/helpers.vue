@@ -121,6 +121,33 @@ export default {
       return true;
     },
 
+    // Date helpers
+    findMaxDt: function(dt1, dt2) {
+      return new Date(Math.max(new Date(dt1), new Date(dt2)));
+    },
+
+    findMinDt: function(dt1, dt2) {
+      return new Date(Math.min(new Date(dt1), new Date(dt2)));
+    },
+
+    toQDateFormat: function(d) {
+      // YYYY/MM/DD format
+      if (d) {
+        return (
+          d.getFullYear() +
+          "/" +
+          (d.getMonth() + 1).toString().padStart(2, 0) +
+          "/" +
+          d
+            .getDate()
+            .toString()
+            .padStart(2, 0)
+        );
+      }
+
+      return d;
+    },
+
     // Scroll Helpers
     _disableScroll() {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop,

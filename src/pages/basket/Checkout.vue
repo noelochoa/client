@@ -103,7 +103,7 @@
                   hide-bottom-space
                   bg-color="white"
                   class="field-value"
-                  placeholder="YYYY-MM-DD HH:mm"
+                  placeholder="Click the icons to select date..."
                   v-model="order.target"
                   :rules="[
                     val =>
@@ -120,14 +120,18 @@
                       >
                         <q-date
                           no-unset
+                          :options="date => holidayList.indexOf(date) === -1"
                           v-model="order.target"
                           mask="YYYY-MM-DD HH:mm"
                           @input="() => $refs.qDateProxyS.hide()"
+                          @navigation="onNavigate"
                         />
+                        <q-inner-loading :showing="fetchingDates">
+                          <q-spinner color="primary" size="50px" />
+                        </q-inner-loading>
                       </q-popup-proxy>
                     </q-icon>
                   </template>
-
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy
@@ -138,6 +142,7 @@
                         <q-time
                           dark
                           v-model="order.target"
+                          :minute-options="[0, 15, 30, 45]"
                           mask="YYYY-MM-DD HH:mm"
                           format24h
                           @input="() => $refs.qTimeProxyS.hide()"
@@ -403,6 +408,22 @@ export default {
       return !this.isEmpty(this.products)
         ? this.products.reduce(reducer, 0)
         : "0";
+    },
+
+    holidayList() {
+      const dayList = new Set();
+      this.holidays.map(item => {
+        const start = this.findMaxDt(item.start, this.startOfMonth);
+        const end = this.findMinDt(item.end, this.endOfMonth);
+        for (
+          let dt = start;
+          dt.getTime() <= end.getTime();
+          dt.setDate(dt.getDate() + 1)
+        ) {
+          dayList.add(this.toQDateFormat(dt));
+        }
+      });
+      return [...dayList];
     }
   },
 
@@ -410,10 +431,15 @@ export default {
     if (process.env.CLIENT) {
       this.getCartDetails();
       this.getProfile();
+      this.getBusinessHolidays();
     }
   },
 
-  mounted() {},
+  mounted() {
+    this.order.target = this.today.yyyymmdd + " 00:00";
+    this.startOfMonth = this.startDayOfMonth;
+    this.endOfMonth = this.lastDayOfMonth;
+  },
 
   data() {
     return {
@@ -421,6 +447,7 @@ export default {
       loading: false,
       fetching: true,
       fetchingProfile: true,
+      fetchingDates: true,
       deliveryTypes: [
         {
           label: "For Delivery",
@@ -431,6 +458,10 @@ export default {
           value: "pickup"
         }
       ],
+
+      startOfMonth: null,
+      endOfMonth: null,
+      holidays: [],
       basket: {},
       profile: {},
       order: {
@@ -481,6 +512,23 @@ export default {
       );
     },
 
+    async getBusinessHolidays(year = null, month = null) {
+      try {
+        this.fetchingDates = true;
+        const resp = await this.$store.dispatch("basket/fetchHolidays", {
+          year,
+          month
+        });
+        if (resp) {
+          this.holidays = resp.slice();
+        }
+      } catch (err) {
+        this.checkOutErr = err;
+      } finally {
+        this.fetchingDates = false;
+      }
+    },
+
     async getCartDetails() {
       try {
         const resp = await this.$store.dispatch("basket/fetchCartDetails");
@@ -507,6 +555,18 @@ export default {
         this.$router.push("/account").catch(err => {});
       } finally {
         this.fetchingProfile = false;
+      }
+    },
+
+    async onNavigate(view) {
+      try {
+        const d = new Date(view.year, view.month - 1);
+        this.startOfMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+        this.endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+
+        this.getBusinessHolidays(view.year, view.month);
+      } catch (err) {
+        this.checkOutErr = err;
       }
     },
 

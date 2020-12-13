@@ -69,9 +69,34 @@ export async function fetchCartDetails({ commit }) {
   }
 }
 
-export async function placeOrder({ commit }, { order, price }) {
+export async function fetchHolidays({}, { year, month }) {
   let resp;
   try {
+    resp = await this.$axios.get("/api/invaliddates", {
+      params: {
+        year,
+        month
+      }
+    });
+    if (resp && resp.data) {
+      return resp.data;
+    }
+    return null;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function placeOrder({ commit, rootGetters }, { order, price }) {
+  let resp;
+  try {
+    if (!rootGetters["auth/isVerified"]) {
+      return Promise.reject(
+        "Account is not verified. Order can not be placed."
+      );
+    }
     resp = await this.$axios.post("/api/orders", {
       ...order,
       price
