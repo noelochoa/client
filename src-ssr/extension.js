@@ -138,7 +138,7 @@ module.exports.extendApp = function({ app, ssr }) {
   });
 
   app.use("/api/basket", cookieParser(), bodyParser.json(), function(req, res) {
-    console.log(req.originalUrl, req.path, req.query);
+    // console.log(req.originalUrl, req.path, req.query);
 
     let headers = {};
     if (req.cookies._JWT_WEB_CART) {
@@ -191,7 +191,7 @@ module.exports.extendApp = function({ app, ssr }) {
   });
 
   app.use("/api", cookieParser(), function(req, res) {
-    console.log(req.originalUrl, req.path, req.query);
+    // console.log(req.originalUrl, req.path, req.query);
     // console.log(req.headers);
     const url = API_URL + req.path;
 

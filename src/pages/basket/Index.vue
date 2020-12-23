@@ -331,7 +331,6 @@ export default {
           }
         });
       } catch (err) {
-        console.log(err);
         this.fetchErr = "Could not update basket items. " + err;
       }
     },
