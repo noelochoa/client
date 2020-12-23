@@ -23,9 +23,15 @@
                 <span class="field-heading text-weight-bold block"
                   >Contact Information
                 </span>
-                <span class="field-value">
+                <q-avatar color="primary" text-color="white">
+                  {{ user.firstname.substring(0, 1) }}
+                </q-avatar>
+                <router-link
+                  to="/account"
+                  class="q-ml-sm field-value hover-primary"
+                >
                   {{ user.firstname + " " + user.lastname }} ({{ user.email }})
-                </span>
+                </router-link>
               </li>
               <li class="q-mt-md">
                 <span class="field-heading text-weight-bold q-mt-sm q-mr-xs">
@@ -49,7 +55,7 @@
               <li class="q-mt-sm">
                 <q-select
                   class="field-value"
-                  label="Delivery Type"
+                  label="Delivery Method"
                   v-model="order.deliveryType"
                   :options="deliveryTypes"
                   outlined
@@ -60,6 +66,7 @@
                   map-options
                   lazy-rules
                   :rules="[_isValidType]"
+                  @input="onSelDelType"
                 />
               </li>
               <li class="q-mt-sm" v-if="order.deliveryType == 'delivery'">
@@ -105,6 +112,7 @@
                   class="field-value"
                   placeholder="Click the icons to select date..."
                   v-model="order.target"
+                  lazy-rules
                   :rules="[
                     val =>
                       (val !== null && val.trim() !== '') || 'Date required.',
@@ -120,10 +128,13 @@
                       >
                         <q-date
                           no-unset
-                          :options="date => holidayList.indexOf(date) === -1"
+                          :navigation-min-year-month="today.yyyymm"
+                          :options="optionsFn"
+                          :events="worklistFn"
+                          :event-color="workColorFn"
                           v-model="order.target"
                           mask="YYYY-MM-DD HH:mm"
-                          @input="() => $refs.qDateProxyS.hide()"
+                          @input="onSelDate"
                           @navigation="onNavigate"
                         />
                         <q-inner-loading :showing="fetchingDates">
@@ -140,12 +151,11 @@
                         transition-hide="scale"
                       >
                         <q-time
-                          dark
                           v-model="order.target"
                           :minute-options="[0, 15, 30, 45]"
                           mask="YYYY-MM-DD HH:mm"
                           format24h
-                          @input="() => $refs.qTimeProxyS.hide()"
+                          @input="onSelTime"
                         />
                       </q-popup-proxy>
                     </q-icon>
@@ -184,62 +194,91 @@
       </div>
 
       <!-- CART ITEMS -->
-      <div class="cart text-field">
-        <div
-          class="text-grey-7 flex cart-item"
-          v-for="(item, pidx) in products"
-          :key="'item-' + pidx"
+      <div class="cart-wrapper">
+        <router-link
+          tag="div"
+          class=" ls-sm text-uppercase cursor-pointer hover-primary inline-block q-mb-md"
+          to="/basket"
         >
-          <div class="product-info product-img">
-            <q-img
-              :src="
-                !isEmpty(item.image)
-                  ? resolveAssetsUrl(item.image)
-                  : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
-              "
-              native-context-menu
-              :ratio="1"
-            >
-              <q-badge class="small-badge" color="primary">{{
-                item.quantity
-              }}</q-badge>
-            </q-img>
-          </div>
-          <div class="product-info ls-sm product-title">
-            <div class="ls-sm text-weight-bold overflow-ellipsis">
-              {{ item.name }}
+          Back to Cart
+        </router-link>
+        <div class="cart text-field">
+          <div
+            class="text-grey-7 flex cart-item"
+            v-for="(item, pidx) in products"
+            :key="'item-' + pidx"
+          >
+            <div class="product-info product-img">
+              <q-img
+                :src="
+                  !isEmpty(item.image)
+                    ? resolveAssetsUrl(item.image)
+                    : 'https://dummyimage.com/370x370/454345/fafafa.png&text=No+Img'
+                "
+                native-context-menu
+                :ratio="1"
+              >
+                <q-badge class="small-badge" color="primary">{{
+                  item.quantity
+                }}</q-badge>
+              </q-img>
+            </div>
+            <div class="product-info ls-sm product-title">
+              <div class="ls-sm text-weight-bold overflow-ellipsis">
+                {{ item.name }}
+              </div>
+              <div
+                class="options text-caption"
+                v-for="(opt, idx) in item.options"
+                :key="'key-' + idx"
+              >
+                {{ opt._option + ": " + opt._selected }}
+                <span v-if="opt.otherValue != null"
+                  >({{ opt.otherValue }}) </span
+                ><br />
+              </div>
             </div>
             <div
-              class="options text-caption"
-              v-for="(opt, idx) in item.options"
-              :key="'key-' + idx"
+              class="product-info text-weight-bold product-price text-right ls-sm"
             >
-              {{ opt._option + ": " + opt._selected }}
-              <span v-if="opt.otherValue != null">({{ opt.otherValue }}) </span
-              ><br />
+              {{ item.price }} PHP<br />
             </div>
           </div>
           <div
-            class="product-info text-weight-bold product-price text-right ls-sm"
+            class="cart-item bordered text-h6 text-dark"
+            v-if="!isEmpty(basket) && !fetching"
           >
-            {{ item.price }} PHP<br />
+            <div class="product-info">Total</div>
+            <div class="product-info"></div>
+            <div class="product-info text-right text-weight-bold">
+              {{ total }} PHP
+            </div>
           </div>
         </div>
-        <div
-          class="cart-item bordered text-h6 text-dark"
-          v-if="!isEmpty(basket) && !fetching"
-        >
-          <div class="product-info">Total</div>
-          <div class="product-info"></div>
-          <div class="product-info text-right text-weight-bold">
-            {{ total }} PHP
+        <div>
+          <div class="text-comment relative">
+            <h6>Order Fulfillment Prediction*:</h6>
+            <p v-if="loading">
+              <q-spinner color="grey-8" size="40px" />
+            </p>
+            <p v-else-if="target_eval">
+              <span class="block" v-html="target_eval"></span>
+              <br />Your order's estimated mimimum lead time is
+              <b>{{ basket.eta }} hours</b>. <br />(Order preparation starts 1-2
+              days prior to your target) <br /><span class="text-caption">
+                * The given estimate is an automated prediction feature of this
+                system.
+              </span>
+            </p>
+            <p v-else>
+              Fill out the form to evaluate your order's ETA.
+            </p>
           </div>
         </div>
       </div>
     </div>
   </q-page>
 </template>
-<style></style>
 <style lang="scss" scoped>
 .mainpage > div {
   width: 100%;
@@ -267,11 +306,15 @@
     line-height: 2em;
   }
 
-  .cart {
+  .cart-wrapper {
     flex: 0 0 480px;
+    margin-top: 10px;
+  }
+
+  .cart {
+    width: 100%;
     display: table;
     table-layout: auto;
-    margin-top: 50px;
     border-collapse: collapse;
   }
 
@@ -311,13 +354,15 @@
 @media (max-width: 1182px) {
   .checkout {
     padding: 0 20px;
+    flex-direction: column-reverse;
   }
   .checkout-heading,
-  .cart {
+  .cart-wrapper {
     margin: 0 auto;
+    max-width: 720px;
     padding-right: 0 !important;
     border-right: none !important;
-    flex: 0 1 720px !important;
+    flex: 0 1 auto !important;
   }
 }
 </style>
@@ -424,6 +469,29 @@ export default {
         }
       });
       return [...dayList];
+    },
+
+    workList() {
+      return this.workload.map(item => item._id);
+    },
+
+    target_eval() {
+      if (!this.order.deliveryType || !this.order.target) return "";
+      if (!this.isDaysAhead(this.order.target, 2)) return "";
+
+      if (this.basket.eta && this.basket.stdER) {
+        const type =
+          this.order.deliveryType == "delivery" ? "delivered" : "picked up";
+        // Within range
+        if (this.basket.eta < 72) {
+          return `<b>Looks good!</b> Your order can be ${type} at your desired schedule.`;
+        } else {
+          return `Sorry, your order may NOT be completed by your target date.<br/>
+          Choose a less busy schedule or consider splitting your order.<br/>
+          You may also continue placing your order and wait for the owner's decision.`;
+        }
+      }
+      return "";
     }
   },
 
@@ -436,7 +504,7 @@ export default {
   },
 
   mounted() {
-    this.order.target = this.today.yyyymmdd + " 00:00";
+    // this.order.target = this.today.yyyymmdd + " 00:00";
     this.startOfMonth = this.startDayOfMonth;
     this.endOfMonth = this.lastDayOfMonth;
   },
@@ -458,10 +526,10 @@ export default {
           value: "pickup"
         }
       ],
-
       startOfMonth: null,
       endOfMonth: null,
       holidays: [],
+      workload: [],
       basket: {},
       profile: {},
       order: {
@@ -506,21 +574,80 @@ export default {
       const fmt = dtpattern.test(val);
       if (!fmt) "Invalid date & time format";
 
-      const dt = Date.parse(val);
       return (
-        dt - new Date() > 24 * 60 * 60 * 1000 || "Please choose a future date."
+        this.isDaysAhead(val, 2) ||
+        "Please choose a future date. (at least 2 days in advance)"
       );
+    },
+
+    optionsFn(date) {
+      return date > this.today.date && this.holidayList.indexOf(date) === -1;
+    },
+
+    worklistFn(date) {
+      return date > this.today.date && this.workList.indexOf(date) !== -1;
+    },
+
+    workColorFn(date) {
+      const item = this.workload[this.workList.indexOf(date)];
+      return item && item.ordersNum >= 3 ? "primary" : "orange";
+    },
+
+    onSelTime(val, details) {
+      if (details.year < this.today.year) {
+        this.order.target =
+          this.today.yyyymmdd + " " + details.hour + ":" + details.minute;
+      }
+      this.$refs.qTimeProxyS.hide();
+    },
+
+    async onSelDelType(val) {
+      this.$refs.qDateProxyS.hide();
+
+      try {
+        this.checkOutErr = "";
+        this.loading = true;
+        const resp = await this.$store.dispatch("basket/checkETA", {
+          target: this.order.target,
+          type: val
+        });
+        this.basket.eta = resp;
+      } catch (err) {
+        this.checkOutErr = err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async onSelDate(val, reason, details) {
+      this.$refs.qDateProxyS.hide();
+      if (!this.order.target || !this.order.deliveryType) return;
+      try {
+        this.checkOutErr = "";
+        this.loading = true;
+        const resp = await this.$store.dispatch("basket/checkETA", {
+          target: val,
+          type: this.order.deliveryType
+        });
+        this.basket.eta = resp;
+      } catch (err) {
+        this.checkOutErr = err;
+      } finally {
+        this.loading = false;
+      }
     },
 
     async getBusinessHolidays(year = null, month = null) {
       try {
+        this.checkOutErr = "";
         this.fetchingDates = true;
         const resp = await this.$store.dispatch("basket/fetchHolidays", {
           year,
           month
         });
         if (resp) {
-          this.holidays = resp.slice();
+          this.holidays = resp.holidays.slice();
+          this.workload = resp.worklist.slice();
         }
       } catch (err) {
         this.checkOutErr = err;
@@ -531,6 +658,7 @@ export default {
 
     async getCartDetails() {
       try {
+        this.checkOutErr = "";
         const resp = await this.$store.dispatch("basket/fetchCartDetails");
         if (resp) {
           this.basket = JSON.parse(JSON.stringify(resp));
@@ -572,6 +700,7 @@ export default {
 
     async onSubmit() {
       try {
+        this.checkOutErr = "";
         this.loading = true;
         await this.$store.dispatch("basket/placeOrder", {
           order: this.order,

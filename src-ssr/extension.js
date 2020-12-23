@@ -149,7 +149,7 @@ module.exports.extendApp = function({ app, ssr }) {
     }
     let options = {
       method: req.method,
-      uri: API_URL + "/basket",
+      uri: API_URL + "/basket" + req.path,
       headers: {
         ...headers
       },

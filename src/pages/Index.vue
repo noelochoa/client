@@ -36,6 +36,11 @@
         </ul>
       </div>
       <div>
+        <div class="center-nav absolute" style="top:-12px; margin-left:16px;">
+          <img src="/logo.png" width="132px" />
+        </div>
+      </div>
+      <div>
         <ul class="right-nav">
           <li class="ls-sm">
             <router-link to="/account" class="header-link hover-primary">
@@ -499,6 +504,11 @@
   }
   .default {
     display: none;
+  }
+  .center-nav {
+    position: relative !important;
+    top: 4px !important;
+    left: 4px !important;
   }
 }
 @media (max-width: 760px) {

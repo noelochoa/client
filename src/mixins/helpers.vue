@@ -28,6 +28,17 @@ export default {
           day: "numeric"
         }),
         iso: d.toISOString(),
+        yyyymm:
+          d.getFullYear() + "/" + (d.getMonth() + 1).toString().padStart(2, 0),
+        date:
+          d.getFullYear() +
+          "/" +
+          (d.getMonth() + 1).toString().padStart(2, 0) +
+          "/" +
+          d
+            .getDate()
+            .toString()
+            .padStart(2, "0"),
         yyyymmdd:
           d.getFullYear() +
           "-" +
@@ -77,6 +88,7 @@ export default {
       }
       return "";
     },
+
     censorTxt(txt) {
       if (txt) {
         return txt.substring(0, 1).padEnd(txt.length, "*");
@@ -128,6 +140,12 @@ export default {
 
     findMinDt: function(dt1, dt2) {
       return new Date(Math.min(new Date(dt1), new Date(dt2)));
+    },
+
+    isDaysAhead(dt, days) {
+      const sdt = moment(dt);
+      const ndt = moment().add(days, "days");
+      return sdt.startOf("day").toDate() - ndt.startOf("day").toDate() >= 0;
     },
 
     toQDateFormat: function(d) {

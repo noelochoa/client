@@ -72,7 +72,7 @@ export async function fetchCartDetails({ commit }) {
 export async function fetchHolidays({}, { year, month }) {
   let resp;
   try {
-    resp = await this.$axios.get("/api/invaliddates", {
+    resp = await this.$axios.get("/api/invaliddates/checkout", {
       params: {
         year,
         month
@@ -82,6 +82,24 @@ export async function fetchHolidays({}, { year, month }) {
       return resp.data;
     }
     return null;
+  } catch (err) {
+    return Promise.reject(
+      err.response ? err.response.data.error : "Unexpected error has occurred."
+    );
+  }
+}
+
+export async function checkETA({}, { target, type }) {
+  let resp;
+  try {
+    resp = await this.$axios.post("/api/basket/eta", {
+      target,
+      type
+    });
+    if (resp && resp.data) {
+      return resp.data.eta;
+    }
+    return true;
   } catch (err) {
     return Promise.reject(
       err.response ? err.response.data.error : "Unexpected error has occurred."
