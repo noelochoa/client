@@ -149,6 +149,7 @@ export default {
   name: "MainLayout",
   preFetch({ store, redirect }) {
     return store.dispatch("home/getPSA").catch(err => {
+      console.error(err);
       redirect("/error500");
     });
   },
