@@ -113,76 +113,76 @@
 }
 }
 
-.mainpage > div[data-v-25c0a714] {
+.mainpage > div[data-v-7a69ed84] {
   width: 100%;
 }
-.order[data-v-25c0a714] {
+.order[data-v-7a69ed84] {
   min-height: 65vh;
   font-size: 16px;
   max-width: 1200px;
   margin: 60px auto;
   padding: 0 80px;
 }
-.order > div[data-v-25c0a714] {
+.order > div[data-v-7a69ed84] {
     width: 100%;
 }
-.order-details[data-v-25c0a714] {
+.order-details[data-v-7a69ed84] {
   display: table;
   table-layout: auto;
   border-spacing: 0 30px;
   width: 100%;
 }
-.order-details .table-header[data-v-25c0a714] {
+.order-details .table-header[data-v-7a69ed84] {
     display: table-header-group;
 }
-.order-details .table-header .header-item[data-v-25c0a714] {
+.order-details .table-header .header-item[data-v-7a69ed84] {
       display: table-cell;
       padding-bottom: 10px;
       border-bottom: 1px solid #cfcac2;
 }
-.order-details .table-item[data-v-25c0a714] {
+.order-details .table-item[data-v-7a69ed84] {
     display: table-row;
     margin: 30px 0;
     width: 100%;
 }
-.order-details .table-item .product-info[data-v-25c0a714] {
+.order-details .table-item .product-info[data-v-7a69ed84] {
       display: table-cell;
       vertical-align: middle;
 }
-.order-details .table-item .product-img[data-v-25c0a714] {
+.order-details .table-item .product-img[data-v-7a69ed84] {
       width: 100px;
 }
-.order-details .table-item .product-detail[data-v-25c0a714] {
+.order-details .table-item .product-detail[data-v-7a69ed84] {
       width: 440px;
       max-width: 440px;
       padding-left: 30px;
 }
-.order-details .table-item .options[data-v-25c0a714] {
+.order-details .table-item .options[data-v-7a69ed84] {
       font-size: 14px;
 }
-.table-footer[data-v-25c0a714] {
+.table-footer[data-v-7a69ed84] {
   display: table;
   table-layout: auto;
   border-spacing: 0 30px;
   width: 100%;
   border-top: 1px solid #cfcac2;
 }
-.table-footer .footer-item[data-v-25c0a714] {
+.table-footer .footer-item[data-v-7a69ed84] {
     display: table-cell;
     vertical-align: middle;
     text-align: right;
 }
-.overflow-ellipsis[data-v-25c0a714] {
+.overflow-ellipsis[data-v-7a69ed84] {
   display: block;
   max-width: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 @media (max-width: 600px) {
-.order[data-v-25c0a714] {
+.order[data-v-7a69ed84] {
     padding: 0 20px;
 }
 }
 
 
-/*# sourceMappingURL=12.2158706e.css.map*/
+/*# sourceMappingURL=12.5fef15a2.css.map*/

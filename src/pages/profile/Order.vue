@@ -235,6 +235,7 @@ export default {
         await this.$store.dispatch("auth/cancelOrder", {
           orderID: this.$route.params.orderID
         });
+        this.showNotif("info", "Your order has been cancelled.");
         this.$router.push("/profile").catch(err => {});
       } catch (err) {
         this.showNotif("negative", err);
