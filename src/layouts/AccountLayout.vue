@@ -85,7 +85,9 @@
             </ul>
           </div>
         </div>
-        <div class="footer-copyright">© 2020 LMC <br />ALL RIGHTS RESERVED</div>
+        <div class="footer-copyright">
+          © 2020 Bake Free <br />ALL RIGHTS RESERVED
+        </div>
       </div>
     </q-footer>
 
@@ -166,14 +168,14 @@ export default {
   },
   meta: {
     title: "Account",
-    titleTemplate: title => `${title} | LMC Web Front`,
+    titleTemplate: title => `${title} | Bake Free Web Front`,
     // meta tags
     meta: {
       description: {
         name: "description",
-        content: "Web Store Front for LMC"
+        content: "Web Store Front for Bake Free"
       },
-      keywords: { name: "keywords", content: "web store front lmc" },
+      keywords: { name: "keywords", content: "web store front bake free" },
       equiv: {
         "http-equiv": "Content-Type",
         content: "text/html; charset=UTF-8"

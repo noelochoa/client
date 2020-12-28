@@ -1,0 +1,51 @@
+{
+  "name": "Webstore",
+  "version": "1.0.1",
+  "description": "Web Front for Bake Free",
+  "author": "noelochoa <35244256+noelochoa@users.noreply.github.com>",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@types/sanitize-html": "1.27.0",
+    "axios": "0.18.1",
+    "axios-auth-refresh": "3.0.0",
+    "body-parser": "1.19.0",
+    "cookie-parser": "1.4.5",
+    "core-js": "3.6.5",
+    "moment": "2.29.1",
+    "quasar": "1.14.3",
+    "request-promise": "4.2.6",
+    "sanitize-html": "2.1.2",
+    "vuex-persistedstate": "4.0.0-beta.1",
+    "vuex-shared-mutations": "1.0.2",
+    "compression": "^1.0.0",
+    "express": "^4.0.0",
+    "lru-cache": "6.0.0",
+    "vue": "2.6.12",
+    "vue-server-renderer": "2.6.12",
+    "vue-router": "3.2.0",
+    "@quasar/babel-preset-app": "2.0.1",
+    "vuex": "3.5.1"
+  },
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ],
+  "quasar": {
+    "ssr": true
+  }
+}

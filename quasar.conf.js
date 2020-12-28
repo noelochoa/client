@@ -80,8 +80,8 @@ module.exports = function(ctx) {
           }
         : {
             // and on build (production):
-            API: "https://localhost:8080",
-            STATIC_URL: "https://localhost:3000"
+            API: "https://bake-free.co",
+            STATIC_URL: "https://api.bake-free.co"
           }
     },
 

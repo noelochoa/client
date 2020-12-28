@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html {{ Q_HTML_ATTRS }}>
+  <head><base href="/">{{ Q_HEAD_TAGS }}
+    <title>Web Store Front</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Web Front for Bake Free">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+    <link rel="icon" type="image/ico" href="favicon.ico">
+  </head>
+  <body class="{{ Q_BODY_CLASSES }}" {{ Q_BODY_ATTRS }}>{{ Q_BODY_TAGS }}
+    <!-- DO NOT touch the following DIV -->
+    <!--vue-ssr-outlet-->
+    <script>
+      const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+      const calcWinFn = () => {
+        // Get window inner height for carousel size
+        const psabar = document.getElementById('psa-bar');
+        document.documentElement.style.setProperty('--window-height', window.innerHeight + 'px');
+        document.documentElement.style.setProperty('--psa-height', (psabar ? psabar.offsetHeight : 0) + 'px');
+      };
+      calcWinFn();
+      window.addEventListener('resize', debounce(calcWinFn, 200));
+    </script>
+  </body>
+</html>

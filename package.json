@@ -1,7 +1,7 @@
 {
-  "name": "client",
-  "version": "0.0.1",
-  "description": "Front end for LMC Web store",
+  "name": "Webstore",
+  "version": "1.0.1",
+  "description": "Web Front for Bake Free",
   "productName": "Web Store Front",
   "author": "noelochoa <35244256+noelochoa@users.noreply.github.com>",
   "private": true,
