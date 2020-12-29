@@ -676,7 +676,7 @@
       .product-title {
         text-align: left;
         margin-top: 2px;
-        word-wrap: nowrap;
+        white-space: nowrap;
         overflow: hidden;
         grid-area: product-title;
       }

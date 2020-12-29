@@ -224,7 +224,7 @@
           "
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h3 ls-sm">{{ item.name }}</div>
+            <div class="text-h4 ls-sm overflow-ellipsis">{{ item.name }}</div>
             <div class="text-subtitle1 q-mt-sm">{{ item.description }}</div>
             <q-btn
               class="q-mt-md ls-sm"
@@ -444,6 +444,14 @@
   }
 }
 
+.overflow-ellipsis {
+  display: block;
+  max-width: inherit;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 640px) {
   .search-results {
     padding-top: 0;
@@ -468,7 +476,7 @@
       .product-title {
         text-align: left;
         margin-top: 2px;
-        word-wrap: nowrap;
+        white-space: nowrap;
         overflow: hidden;
         grid-area: product-title;
       }
