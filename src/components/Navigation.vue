@@ -191,7 +191,7 @@
     </q-dialog>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 .navigation {
   height: 106px;
   display: flex;
