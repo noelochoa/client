@@ -208,6 +208,11 @@
     .register {
       justify-self: center;
     }
+
+    & > div {
+      width: 100% !important;
+      max-width: 400px;
+    }
   }
 }
 </style>
