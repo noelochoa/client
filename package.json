@@ -19,6 +19,7 @@
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
     "quasar": "^1.0.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "sanitize-html": "^2.1.2",
     "vuex-persistedstate": "^4.0.0-beta.1",
