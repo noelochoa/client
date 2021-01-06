@@ -12,7 +12,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@types/sanitize-html": "^1.27.0",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "axios-auth-refresh": "^3.0.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
@@ -28,10 +28,10 @@
   "devDependencies": {
     "@quasar/app": "^2.0.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-loader": "^3.0.3",
-    "eslint-plugin-vue": "^6.1.2"
+    "eslint": "^7.17.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-vue": "^7.4.1"
   },
   "browserslist": [
     "last 10 Chrome versions",
