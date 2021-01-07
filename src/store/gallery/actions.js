@@ -34,6 +34,9 @@ export async function getGalleryItems({ commit }, { category, sort }) {
         let last = resp[0].data.products.slice(-1).pop();
         commit("SET_PRODUCTS", resp[0].data.products);
         commit("SET_LASTSORT", last);
+      } else {
+        commit("SET_PRODUCTS", []);
+        commit("SET_LASTSORT", null);
       }
     }
     return true;
@@ -56,6 +59,9 @@ export async function getProducts({ commit }, { category, sort }) {
         let last = resp.data.products.slice(-1).pop();
         commit("SET_PRODUCTS", resp.data.products);
         commit("SET_LASTSORT", last);
+      } else {
+        commit("SET_PRODUCTS", []);
+        commit("SET_LASTSORT", null);
       }
     }
     return true;
