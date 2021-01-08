@@ -26,7 +26,7 @@
             <ul class="links q-my-md">
               <li class="block"><router-link to="/">HOME</router-link></li>
               <li class="block">
-                <router-link to="/products">PRODUCTS</router-link>
+                <router-link to="/products/all">PRODUCTS</router-link>
               </li>
               <li class="block">
                 <router-link to="/account">ACCOUNT</router-link>
