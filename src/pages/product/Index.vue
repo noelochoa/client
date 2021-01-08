@@ -666,12 +666,15 @@ export default {
         this.product.options.forEach((item, idx) => {
           // default to last item
           const last = item.choices.slice(-1).pop();
+          let priceLbl =
+            last.price > 0
+              ? ` (+${last.price} PHP)`
+              : last.price < 0
+              ? ` (${last.price} PHP)`
+              : "";
+
           this.order.options[idx] = {
-            label:
-              last.value +
-              (last.price >= 0
-                ? ` (+${last.price} PHP)`
-                : ` (${last.price} PHP)`),
+            label: last.value + priceLbl,
             value: last,
             key: item.attribute
           };
@@ -686,12 +689,15 @@ export default {
     toSelOptions(key, obj) {
       if (obj) {
         return obj.map(item => {
+          let priceLbl =
+            item.price > 0
+              ? ` (+${item.price} PHP)`
+              : item.price < 0
+              ? ` (${item.price} PHP)`
+              : "";
+
           return {
-            label:
-              item.value +
-              (item.price >= 0
-                ? ` (+${item.price} PHP)`
-                : ` (${item.price} PHP)`),
+            label: item.value + priceLbl,
             value: item,
             key: key
           };

@@ -20,7 +20,7 @@
           </router-link>
         </li>
         <li class="ls-sm">
-          <router-link to="/products" class="header-link hover-primary">
+          <router-link to="/products/all" class="header-link hover-primary">
             <span class="default">SHOP</span>
             <q-btn
               class="mobile no-hover-bg"

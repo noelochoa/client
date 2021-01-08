@@ -19,7 +19,7 @@
           size="16px"
           padding="sm lg"
           label="Go to Shop"
-          to="/products"
+          to="/products/all"
         />
       </div>
       <div class="basket-details q-mt-lg" v-else>

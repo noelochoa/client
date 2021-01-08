@@ -317,7 +317,7 @@
         size="16px"
         padding="sm lg"
         label="View All Products"
-        to="/products"
+        to="/products/all"
       />
     </div>
   </q-page>
