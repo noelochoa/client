@@ -189,6 +189,23 @@
   }
 }
 </style>
+<style>
+@media print {
+  .navigation,
+  .q-footer,
+  .q-header,
+  .cancel-btn {
+    display: none !important;
+  }
+
+  html,
+  body {
+    height: 100vh;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+</style>
 
 <script>
 import HelperMixin from "../../mixins/helpers";
