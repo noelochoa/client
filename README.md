@@ -1,6 +1,6 @@
 # Web Store Front (client)
 
-Front end for LMC Web store
+Front end for Bake Free Web store
 
 ## Install the dependencies
 ```bash
