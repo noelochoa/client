@@ -17,6 +17,7 @@
             "
             spinner-color="primary"
             style="max-height:65vh;"
+            contain
           >
             <q-icon
               v-if="!isEmpty(product.discount)"
