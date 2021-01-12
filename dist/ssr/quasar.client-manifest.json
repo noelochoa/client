@@ -46,13 +46,13 @@
     "js/7.b6e305de.js",
     "js/8.09d1df8d.js",
     "js/9.68051586.js",
-    "js/app.c4c39414.js",
+    "js/app.5e9b49ed.js",
     "js/vendor.0af32698.js",
     "logo.png"
   ],
   "initial": [
     "js/vendor.0af32698.js",
-    "js/app.c4c39414.js"
+    "js/app.5e9b49ed.js"
   ],
   "async": [
     "js/1.c798043e.js",

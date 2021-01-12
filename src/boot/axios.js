@@ -49,7 +49,7 @@ export default inject(async function({ store, ssrContext }) {
         error.config.url.indexOf("/api/profile/refresh") !== -1
       ) {
         store.dispatch("auth/resetAuth");
-        // redirect("/account");
+        redirect("/account");
       }
 
       return Promise.reject(error);
