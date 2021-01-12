@@ -166,7 +166,7 @@
                 <span class="field-name block">Special Instructions</span>
                 <q-input
                   type="textarea"
-                  :rows="4"
+                  :rows="6"
                   textarea
                   outlined
                   no-error-icon
@@ -370,6 +370,7 @@
 <script>
 import HelperMixin from "../../mixins/helpers";
 import Navigation from "../../components/Navigation";
+import { TouchSwipe } from "quasar";
 
 export default {
   name: "Checkout",
@@ -480,10 +481,19 @@ export default {
       if (!this.isDaysAhead(this.order.target, 2)) return "";
 
       if (this.basket.eta && this.basket.stdER) {
+        const now = new Date();
+        const twoDaysAdv = new Date(this.order.target);
+        twoDaysAdv.setHours(0, 0);
+        twoDaysAdv.setDate(twoDaysAdv.getDate() - 2);
+
+        const start = now > twoDaysAdv ? now : twoDaysAdv; // get max
+        const diff =
+          Math.abs(start.getTime() - new Date(this.order.target).getTime()) /
+          3600000;
         const type =
           this.order.deliveryType == "delivery" ? "delivered" : "picked up";
         // Within range
-        if (this.basket.eta < 72) {
+        if (this.basket.eta < diff) {
           return `<b>Looks good!</b> Your order can be ${type} at your desired schedule.`;
         } else {
           return `Sorry, your order may NOT be completed by your target date.<br/>
