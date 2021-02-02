@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lhh Lpr lfr">
     <q-header elevated>
-      <q-toolbar id="psa-bar">
+      <q-toolbar id="psa-bar" v-if="psa">
         <q-toolbar-title class="text-center header">
           <a v-if="psa.link" :href="psa.link" target="_blank">
             <h6 v-html="psa.message"></h6>
